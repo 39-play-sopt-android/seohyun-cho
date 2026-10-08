@@ -1,8 +1,10 @@
 package org.sopt.play
+import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,6 +30,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,11 +40,33 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 class LoginActivity : ComponentActivity() {
+
+    private var registeredEmail by mutableStateOf("")
+    private var registeredPassword by mutableStateOf("")
+
+    private val registerLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            registeredEmail = result.data?.getStringExtra("email") ?: ""
+            registeredPassword = result.data?.getStringExtra("password") ?: ""
+        }
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-            LoginScreen()
+            LoginScreen(
+                registeredEmail = registeredEmail,
+                registeredPassword = registeredPassword,
+                onRegisterClick = {
+                    registerLauncher.launch(
+                        Intent(this, RegisterActivity::class.java)
+                    )
+                }
+            )
         }
     }
 
@@ -48,14 +75,27 @@ class LoginActivity : ComponentActivity() {
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen()
+    LoginScreen(
+        registeredEmail = "",
+        registeredPassword = "",
+        onRegisterClick = {}
+    )
 }
 
 @Composable
-fun LoginScreen(){
+fun LoginScreen(
+    registeredEmail: String,
+    registeredPassword: String,
+    onRegisterClick: () -> Unit
+){
 
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var email by remember(registeredEmail) {
+        mutableStateOf(registeredEmail)
+    }
+    var password by remember(registeredPassword) {
+        mutableStateOf(registeredPassword)
+    }
+
 
     val isEmailError = email.isNotEmpty() &&
             !Patterns.EMAIL_ADDRESS.matcher(email).matches()
@@ -64,6 +104,8 @@ fun LoginScreen(){
 
     val isLoginEnabled =
         email.isNotEmpty() && password.isNotEmpty() && !isEmailError && !isPasswordError
+
+    val context = LocalContext.current
 
 
     Column(
@@ -78,7 +120,8 @@ fun LoginScreen(){
     ){
         Text(text = "이메일로 로그인하기",
             fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
+            fontFamily = FontFamily(Font(R.font.pretendard_bold)),
+            fontWeight = FontWeight.SemiBold,
             color = Color.Black
             )
 
@@ -87,6 +130,7 @@ fun LoginScreen(){
         Text(
             text = "이메일 주소",
             fontSize = 14.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_medium)),
             color = Color.Black
         )
 
@@ -97,7 +141,7 @@ fun LoginScreen(){
             onValueChange = {email = it},
             isError = isEmailError,
             placeholder = {
-                Text("abc@email.com", color = Color(0xFFD1D5D6))
+                Text("abc@email.com", color = Color(0xFFD1D5D6), fontFamily = FontFamily(Font(R.font.pretendard_medium)))
             },
             singleLine = true,
             modifier = Modifier
@@ -118,6 +162,7 @@ fun LoginScreen(){
 
             Text(
                 text = "올바른 이메일을 입력해주세요.",
+                fontFamily = FontFamily(Font(R.font.pretendard_medium)),
                 fontSize = 12.sp,
                 color = Color.Red
             )
@@ -128,7 +173,8 @@ fun LoginScreen(){
         Text(
             text = "비밀번호",
             fontSize = 14.sp,
-            color = Color.Black
+            color = Color.Black,
+            fontFamily = FontFamily(Font(R.font.pretendard_medium)),
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -138,7 +184,7 @@ fun LoginScreen(){
             onValueChange = { password = it },
             isError = isPasswordError,
             placeholder = {
-                Text("6자 이상의 비밀번호", color = Color(0xFFD1D5D6))
+                Text("6자 이상의 비밀번호", color = Color(0xFFD1D5D6), fontFamily = FontFamily(Font(R.font.pretendard_medium)))
             },
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
@@ -205,7 +251,7 @@ fun LoginScreen(){
             Spacer(modifier = Modifier.width(4.dp))
 
             TextButton(
-                onClick = { }
+                onClick = {onRegisterClick()}
             ) {
                 Text(
                     text = "회원가입하기",
