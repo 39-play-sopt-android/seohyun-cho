@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,28 +17,43 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class LoginActivity : ComponentActivity() {
 
@@ -50,23 +66,81 @@ class LoginActivity : ComponentActivity() {
         if (result.resultCode == RESULT_OK) {
             registeredEmail = result.data?.getStringExtra("email") ?: ""
             registeredPassword = result.data?.getStringExtra("password") ?: ""
+            showRegisterSuccess = true
         }
     }
+
+    private var showRegisterSuccess by mutableStateOf(false)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
+
+            val snackbarHostState = remember { SnackbarHostState() }
+
+            LaunchedEffect(showRegisterSuccess) {
+                if (showRegisterSuccess) {
+                    launch {
+                        snackbarHostState.showSnackbar(
+                            message = "회원가입이 완료되었어요!",
+                            duration = SnackbarDuration.Indefinite
+                        )
+                    }
+
+                    delay(3000)
+                    snackbarHostState.currentSnackbarData?.dismiss()
+                    showRegisterSuccess = false
+                }
+            }
+
+            Scaffold(
+                snackbarHost = {
+                    SnackbarHost(snackbarHostState) { data ->
+                        Surface(
+                            color = Color.Black,
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Text(
+                                text = data.visuals.message,
+                                color = Color.White,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
+                    }
+                }
+            ) { innerPadding ->
+                Box(modifier = Modifier.padding(innerPadding)) {
+
             LoginScreen(
                 registeredEmail = registeredEmail,
                 registeredPassword = registeredPassword,
+
                 onRegisterClick = {
                     registerLauncher.launch(
-                        Intent(this, RegisterActivity::class.java)
+                        Intent(this@LoginActivity, RegisterActivity::class.java)
                     )
+                },
+
+                onLoginClick = {
+                    val intent = Intent(
+                        this@LoginActivity,
+                        MainActivity::class.java
+                    ).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                                Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    }
+
+                    startActivity(intent)
                 }
-            )
+
+
+            )}
+
+            }
+
+
         }
     }
 
@@ -78,7 +152,8 @@ fun LoginScreenPreview() {
     LoginScreen(
         registeredEmail = "",
         registeredPassword = "",
-        onRegisterClick = {}
+        onRegisterClick = {},
+        onLoginClick = {}
     )
 }
 
@@ -86,7 +161,8 @@ fun LoginScreenPreview() {
 fun LoginScreen(
     registeredEmail: String,
     registeredPassword: String,
-    onRegisterClick: () -> Unit
+    onRegisterClick: () -> Unit,
+    onLoginClick: () -> Unit
 ){
 
     var email by remember(registeredEmail) {
@@ -105,8 +181,9 @@ fun LoginScreen(
     val isLoginEnabled =
         email.isNotEmpty() && password.isNotEmpty() && !isEmailError && !isPasswordError
 
-    val context = LocalContext.current
-
+    // 심화과제
+    val passwordFocusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     Column(
         modifier = Modifier
@@ -144,6 +221,12 @@ fun LoginScreen(
                 Text("abc@email.com", color = Color(0xFFD1D5D6), fontFamily = FontFamily(Font(R.font.pretendard_medium)))
             },
             singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(
+                onNext = { passwordFocusRequester.requestFocus() }
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(54.dp),
@@ -187,8 +270,15 @@ fun LoginScreen(
                 Text("6자 이상의 비밀번호", color = Color(0xFFD1D5D6), fontFamily = FontFamily(Font(R.font.pretendard_medium)))
             },
             singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = { keyboardController?.hide() }
+            ),
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier
+                .focusRequester(passwordFocusRequester)
                 .fillMaxWidth()
                 .height(54.dp),
             shape = RoundedCornerShape(12.dp),
@@ -213,26 +303,32 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        Button(
-            onClick = { },
-            enabled = isLoginEnabled,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(54.dp),
-            shape = RoundedCornerShape(50.dp),
-            colors = ButtonDefaults.buttonColors(
-                disabledContainerColor = Color.White,
-                disabledContentColor = Color(0xFFB2BABD),
-                containerColor = Color.Black,
-                contentColor = Color.White
-            )
 
-        ) {
-            Text(
-                text = "로그인",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
-            )
+        CompositionLocalProvider(
+            LocalRippleConfiguration provides null
+        )
+        {
+            Button(
+                onClick = { onLoginClick() },
+                enabled = isLoginEnabled,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(54.dp),
+                shape = RoundedCornerShape(50.dp),
+                colors = ButtonDefaults.buttonColors(
+                    disabledContainerColor = Color.White,
+                    disabledContentColor = Color(0xFFB2BABD),
+                    containerColor = Color.Black,
+                    contentColor = Color.White
+                )
+
+            ) {
+                Text(
+                    text = "로그인",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(20.dp))
