@@ -17,8 +17,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.OutputTransformation
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.LocalRippleConfiguration
@@ -48,7 +50,6 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -165,12 +166,23 @@ fun LoginScreen(
     onLoginClick: () -> Unit
 ){
 
-    var email by remember(registeredEmail) {
+    /*var email by remember(registeredEmail) {
         mutableStateOf(registeredEmail)
     }
     var password by remember(registeredPassword) {
         mutableStateOf(registeredPassword)
-    }
+    }*/
+
+    val emailState = rememberTextFieldState(
+        initialText = registeredEmail
+    )
+
+    val passwordState = rememberTextFieldState(
+        initialText = registeredPassword
+    )
+
+    val email = emailState.text.toString()
+    val password = passwordState.text.toString()
 
 
     val isEmailError = email.isNotEmpty() &&
@@ -214,19 +226,24 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = email,
-            onValueChange = {email = it},
+            //value = email,
+            //onValueChange = {email = it},
+            state = emailState,
             isError = isEmailError,
             placeholder = {
                 Text("abc@email.com", color = Color(0xFFD1D5D6), fontFamily = FontFamily(Font(R.font.pretendard_medium)))
             },
-            singleLine = true,
+            //singleLine = true,
+            lineLimits = TextFieldLineLimits.SingleLine,
+            onKeyboardAction = {
+                passwordFocusRequester.requestFocus()
+            },
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Next
             ),
-            keyboardActions = KeyboardActions(
+            /*keyboardActions = KeyboardActions(
                 onNext = { passwordFocusRequester.requestFocus() }
-            ),
+            ),*/
             modifier = Modifier
                 .fillMaxWidth()
                 .height(54.dp),
@@ -263,20 +280,29 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
+            //value = password,
+            //onValueChange = { password = it },
+            state = passwordState,
             isError = isPasswordError,
             placeholder = {
                 Text("6자 이상의 비밀번호", color = Color(0xFFD1D5D6), fontFamily = FontFamily(Font(R.font.pretendard_medium)))
             },
-            singleLine = true,
+            //singleLine = true,
+
+            onKeyboardAction = {
+                keyboardController?.hide()
+            },
+            lineLimits = TextFieldLineLimits.SingleLine,
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done
             ),
-            keyboardActions = KeyboardActions(
+            /*keyboardActions = KeyboardActions(
                 onDone = { keyboardController?.hide() }
-            ),
-            visualTransformation = PasswordVisualTransformation(),
+            ),*/
+            //visualTransformation = PasswordVisualTransformation(),
+            outputTransformation = OutputTransformation {
+                replace(0, length, "•".repeat(length))
+            },
             modifier = Modifier
                 .focusRequester(passwordFocusRequester)
                 .fillMaxWidth()
