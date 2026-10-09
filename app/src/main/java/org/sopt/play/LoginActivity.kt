@@ -2,6 +2,7 @@ package org.sopt.play
 import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -50,6 +51,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -212,6 +214,9 @@ fun LoginScreen(
     val passwordFocusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
 
+    // 도약과제
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -362,7 +367,17 @@ fun LoginScreen(
         )
         {
             Button(
-                onClick = { onLoginClick() },
+                onClick = {
+                    if (email == registeredEmail &&
+                        password == registeredPassword &&
+                        registeredEmail.isNotEmpty() &&
+                        registeredPassword.isNotEmpty()
+                    ) {
+                        onLoginClick()
+                    } else {
+                        Toast.makeText(context,"로그인에 실패했습니다.",Toast.LENGTH_SHORT).show()
+                    }
+                },
                 enabled = isLoginEnabled,
                 modifier = Modifier
                     .fillMaxWidth()
