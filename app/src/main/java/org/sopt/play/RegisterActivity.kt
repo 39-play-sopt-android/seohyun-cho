@@ -5,6 +5,11 @@ import android.os.Bundle
 import android.util.Patterns
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -175,7 +180,11 @@ fun RegisterScreen(
                 unfocusedContainerColor = Color.White
             )
         )
-
+        AnimatedVisibility(
+            visible = isEmailError,
+            enter = fadeIn() + expandVertically(),
+            exit = fadeOut() + shrinkVertically()
+        ){
         if (isEmailError) {
             Spacer(modifier = Modifier.height(4.dp))
 
@@ -185,6 +194,7 @@ fun RegisterScreen(
                 fontSize = 12.sp,
                 color = Color.Red
             )
+        }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -220,14 +230,21 @@ fun RegisterScreen(
             )
         )
 
-        if (isPasswordError) {
-            Spacer(modifier = Modifier.height(4.dp))
 
-            Text(
-                text = "비밀번호는 6자 이상 입력해주세요.",
-                fontSize = 12.sp,
-                color = Color.Red
-            )
+        AnimatedVisibility(
+            visible = isEmailError,
+            enter = fadeIn() + expandVertically(),
+            exit = fadeOut() + shrinkVertically()
+        ) {
+            if (isPasswordError) {
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = "비밀번호는 6자 이상 입력해주세요.",
+                    fontSize = 12.sp,
+                    color = Color.Red
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -263,15 +280,22 @@ fun RegisterScreen(
             )
         )
 
-        if (isConfirmPasswordError) {
-            Spacer(modifier = Modifier.height(4.dp))
+        AnimatedVisibility(
+            visible = isEmailError,
+            enter = fadeIn() + expandVertically(),
+            exit = fadeOut() + shrinkVertically()
+        )
+        {
+            if (isConfirmPasswordError) {
+                Spacer(modifier = Modifier.height(4.dp))
 
-            Text(
-                text = "비밀번호와 동일하게 입력해주세요.",
-                fontSize = 12.sp,
-                color = Color.Red,
-                fontFamily = FontFamily(Font(R.font.pretendard_medium))
-            )
+                Text(
+                    text = "비밀번호와 동일하게 입력해주세요.",
+                    fontSize = 12.sp,
+                    color = Color.Red,
+                    fontFamily = FontFamily(Font(R.font.pretendard_medium))
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(32.dp))

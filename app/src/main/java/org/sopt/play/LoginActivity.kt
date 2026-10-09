@@ -5,6 +5,11 @@ import android.util.Patterns
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -181,6 +186,16 @@ fun LoginScreen(
         initialText = registeredPassword
     )
 
+    LaunchedEffect(registeredEmail, registeredPassword) {
+        emailState.edit {
+            replace(0, length, registeredEmail)
+        }
+
+        passwordState.edit {
+            replace(0, length, registeredPassword)
+        }
+    }
+
     val email = emailState.text.toString()
     val password = passwordState.text.toString()
 
@@ -257,6 +272,11 @@ fun LoginScreen(
             )
         )
 
+        AnimatedVisibility(
+            visible = isEmailError,
+            enter = fadeIn() + expandVertically(),
+            exit = fadeOut() + shrinkVertically()
+        ){
         if (isEmailError) {
             Spacer(modifier = Modifier.height(4.dp))
 
@@ -266,6 +286,7 @@ fun LoginScreen(
                 fontSize = 12.sp,
                 color = Color.Red
             )
+        }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -317,16 +338,22 @@ fun LoginScreen(
             )
         )
 
-        if (isPasswordError) {
-            Spacer(modifier = Modifier.height(4.dp))
+        AnimatedVisibility(
+            visible = isPasswordError,
+            enter = fadeIn() + expandVertically(),
+            exit = fadeOut() + shrinkVertically()
+        )
+        {
+            if (isPasswordError) {
+                Spacer(modifier = Modifier.height(4.dp))
 
-            Text(
-                text = "비밀번호는 6자 이상 입력해주세요.",
-                fontSize = 12.sp,
-                color = Color.Red
-            )
+                Text(
+                    text = "비밀번호는 6자 이상 입력해주세요.",
+                    fontSize = 12.sp,
+                    color = Color.Red
+                )
+            }
         }
-
         Spacer(modifier = Modifier.height(32.dp))
 
 
