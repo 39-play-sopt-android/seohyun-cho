@@ -94,7 +94,7 @@ class LoginActivity : ComponentActivity() {
                     launch {
                         snackbarHostState.showSnackbar(
                             message = "회원가입이 완료되었어요!",
-                            duration = SnackbarDuration.Indefinite
+                            duration = SnackbarDuration.Short
                         )
                     }
 
