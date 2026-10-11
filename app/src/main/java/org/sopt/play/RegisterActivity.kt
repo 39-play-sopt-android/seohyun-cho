@@ -133,7 +133,7 @@ fun RegisterScreen(
             value = name,
             onValueChange = {name = it},
             placeholder = {
-                Text("홍길동      ", color = Color(0xFFD1D5D6), fontFamily = FontFamily(Font(R.font.pretendard_medium)))
+                Text("홍길동", color = Color(0xFFD1D5D6), fontFamily = FontFamily(Font(R.font.pretendard_medium)))
             },
             singleLine = true,
             modifier = Modifier
