@@ -66,8 +66,8 @@ import kotlinx.coroutines.launch
 
 class LoginActivity : ComponentActivity() {
 
-    private var registeredEmail by mutableStateOf("")
-    private var registeredPassword by mutableStateOf("")
+    private var registeredEmail : String? = ""
+    private var registeredPassword : String? = ""
 
     private val registerLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
