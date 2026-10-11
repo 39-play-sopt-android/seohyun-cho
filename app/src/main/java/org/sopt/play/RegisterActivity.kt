@@ -122,10 +122,14 @@ fun RegisterScreen(
         modifier =
             modifier
                 .fillMaxSize()
-                .safeContentPadding()
+                //.safeContentPadding()
                 .verticalScroll(rememberScrollState())
                 //피드백 반영 (회원가입 화면도 Figma 여백 좌우 16dp, 상단 60dp 적용)
-                .padding(start = 16.dp, top = 60.dp, end = 16.dp, bottom = 0.dp)
+                .padding(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = 60.dp,
+                )
     ) {
         Text(
             text = "이메일로 회원가입",
