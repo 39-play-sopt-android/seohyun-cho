@@ -224,9 +224,10 @@ fun LoginScreen(
             .fillMaxSize()
             .background(Color.White)
             .padding(
-                start = 20.dp,
-                end = 20.dp,
-                top = 40.dp
+               start = 16.dp,
+               top = 60.dp,
+               end = 16.dp,
+               bottom = 0.dp
             )
     ){
         Text(text = "이메일로 로그인하기",
