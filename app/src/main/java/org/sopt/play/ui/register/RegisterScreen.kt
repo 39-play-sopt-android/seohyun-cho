@@ -6,39 +6,24 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.border
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.OutputTransformation
-import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -47,6 +32,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.sopt.play.R
+import org.sopt.play.ui.component.PlayButton
+import org.sopt.play.ui.component.PlayTextField
 
 @Composable
 fun RegisterScreen(
@@ -87,16 +74,13 @@ fun RegisterScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
-    var nameFocused by remember { mutableStateOf(false) }
-    var emailFocused by remember { mutableStateOf(false) }
-    var passwordFocused by remember { mutableStateOf(false) }
-    var confirmPasswordFocused by remember { mutableStateOf(false) }
 
     //피드백 반영 (화면 modifier 적용 및 Figma 기준 여백 정리)
     Column(
         modifier =
             modifier
                 .fillMaxSize()
+                .background(Color.White)
                 .safeDrawingPadding() //.safeContentPadding() -> 얘랑 다름
                 .verticalScroll(rememberScrollState())
                 .padding(
@@ -123,49 +107,10 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        OutlinedTextField(
+        PlayTextField(
             state = nameState,
-            //피드백 반영 (Next로 다음 입력란 이동, 마지막 입력란은 Done 처리)
+            placeholder = "홍길동",
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            placeholder = {
-                Text(
-                    "홍길동",
-                    color = Color(0xFFD1D5D6),
-                    fontFamily = FontFamily(Font(R.font.pretendard_medium)),
-                )
-            },
-            lineLimits = TextFieldLineLimits.SingleLine,
-            modifier =
-                Modifier.fillMaxWidth()
-                    .onFocusChanged { nameFocused = it.isFocused }
-                    //피드백 반영 (Figma 테두리 2dp 적용, 오류와 포커스 색상 유지)
-                    .border(
-                        width = 2.dp,
-                        color =
-                            when {
-                                false -> Color.Red
-                                nameFocused -> Color(0xFF505559)
-                                else -> Color(0xFFD1D5D6)
-                            },
-                        shape = RoundedCornerShape(12.dp),
-                    ),
-            //피드백 반영 (고정 높이 대신 내부 여백 사용, 입력 글자 잘림 방지 및 Pretendard 적용)
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 15.dp),
-            textStyle =
-                TextStyle(
-                    fontFamily = FontFamily(Font(R.font.pretendard_medium)),
-                    fontSize = 14.sp,
-                    lineHeight = 20.sp,
-                ),
-            shape = RoundedCornerShape(12.dp),
-            colors =
-                OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Color.Transparent,
-                    focusedBorderColor = Color.Transparent,
-                    errorBorderColor = Color.Transparent,
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White,
-                ),
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -179,50 +124,11 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        OutlinedTextField(
+        PlayTextField(
             state = emailState,
-            //피드백 반영 (Next로 다음 입력란 이동, 마지막 입력란은 Done 처리)
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            placeholder = "abc@email.com",
             isError = isEmailError,
-            placeholder = {
-                Text(
-                    "abc@email.com",
-                    color = Color(0xFFD1D5D6),
-                    fontFamily = FontFamily(Font(R.font.pretendard_medium)),
-                )
-            },
-            lineLimits = TextFieldLineLimits.SingleLine,
-            modifier =
-                Modifier.fillMaxWidth()
-                    .onFocusChanged { emailFocused = it.isFocused }
-                    //피드백 반영 (Figma 테두리 2dp 적용, 오류와 포커스 색상 유지)
-                    .border(
-                        width = 2.dp,
-                        color =
-                            when {
-                                isEmailError -> Color.Red
-                                emailFocused -> Color(0xFF505559)
-                                else -> Color(0xFFD1D5D6)
-                            },
-                        shape = RoundedCornerShape(12.dp),
-                    ),
-            //피드백 반영 (고정 높이 대신 내부 여백 사용, 입력 글자 잘림 방지 및 Pretendard 적용)
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 15.dp),
-            textStyle =
-                TextStyle(
-                    fontFamily = FontFamily(Font(R.font.pretendard_medium)),
-                    fontSize = 14.sp,
-                    lineHeight = 20.sp,
-                ),
-            shape = RoundedCornerShape(12.dp),
-            colors =
-                OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Color.Transparent,
-                    focusedBorderColor = Color.Transparent,
-                    errorBorderColor = Color.Transparent,
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White,
-                ),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
         )
         //피드백 반영 (visible로 오류 표시 제어, 중복 if 제거 및 글자 크기 통일)
         AnimatedVisibility(
@@ -254,54 +160,14 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        OutlinedTextField(
+        PlayTextField(
             state = passwordState,
-            //피드백 반영 (Next로 다음 입력란 이동, 마지막 입력란은 Done 처리)
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            placeholder = "6자 이상의 비밀번호",
             isError = isPasswordError,
-            placeholder = {
-                Text(
-                    "6자 이상의 비밀번호",
-                    color = Color(0xFFD1D5D6),
-                    fontFamily = FontFamily(Font(R.font.pretendard_medium)),
-                )
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            outputTransformation = OutputTransformation {
+                replace(0, length, "•".repeat(length))
             },
-            lineLimits = TextFieldLineLimits.SingleLine,
-            outputTransformation =
-                OutputTransformation {
-                    replace(0, length, "•".repeat(length))
-                },
-            modifier =
-                Modifier.fillMaxWidth()
-                    .onFocusChanged { passwordFocused = it.isFocused }
-                    //피드백 반영 (Figma 테두리 2dp 적용, 오류와 포커스 색상 유지)
-                    .border(
-                        width = 2.dp,
-                        color =
-                            when {
-                                isPasswordError -> Color.Red
-                                passwordFocused -> Color(0xFF505559)
-                                else -> Color(0xFFD1D5D6)
-                            },
-                        shape = RoundedCornerShape(12.dp),
-                    ),
-            //피드백 반영 (고정 높이 대신 내부 여백 사용, 입력 글자 잘림 방지 및 Pretendard 적용)
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 15.dp),
-            textStyle =
-                TextStyle(
-                    fontFamily = FontFamily(Font(R.font.pretendard_medium)),
-                    fontSize = 14.sp,
-                    lineHeight = 20.sp,
-                ),
-            shape = RoundedCornerShape(12.dp),
-            colors =
-                OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Color.Transparent,
-                    focusedBorderColor = Color.Transparent,
-                    errorBorderColor = Color.Transparent,
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White,
-                ),
         )
 
         //피드백 반영 (visible로 오류 표시 제어, 중복 if 제거 및 글자 크기 통일)
@@ -335,58 +201,18 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        OutlinedTextField(
+        PlayTextField(
             state = confirmPasswordState,
-            //피드백 반영 (Next로 다음 입력란 이동, 마지막 입력란은 Done 처리)
+            placeholder = "6자 이상의 비밀번호",
+            isError = isConfirmPasswordError,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             onKeyboardAction = {
                 keyboardController?.hide()
                 focusManager.clearFocus()
             },
-            isError = isConfirmPasswordError,
-            placeholder = {
-                Text(
-                    "6자 이상의 비밀번호",
-                    color = Color(0xFFD1D5D6),
-                    fontFamily = FontFamily(Font(R.font.pretendard_medium)),
-                )
+            outputTransformation = OutputTransformation {
+                replace(0, length, "•".repeat(length))
             },
-            lineLimits = TextFieldLineLimits.SingleLine,
-            outputTransformation =
-                OutputTransformation {
-                    replace(0, length, "•".repeat(length))
-                },
-            modifier =
-                Modifier.fillMaxWidth()
-                    .onFocusChanged { confirmPasswordFocused = it.isFocused }
-                    //피드백 반영 (Figma 테두리 2dp 적용, 오류와 포커스 색상 유지)
-                    .border(
-                        width = 2.dp,
-                        color =
-                            when {
-                                isConfirmPasswordError -> Color.Red
-                                confirmPasswordFocused -> Color(0xFF505559)
-                                else -> Color(0xFFD1D5D6)
-                            },
-                        shape = RoundedCornerShape(12.dp),
-                    ),
-            //피드백 반영 (고정 높이 대신 내부 여백 사용, 입력 글자 잘림 방지 및 Pretendard 적용)
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 15.dp),
-            textStyle =
-                TextStyle(
-                    fontFamily = FontFamily(Font(R.font.pretendard_medium)),
-                    fontSize = 14.sp,
-                    lineHeight = 20.sp,
-                ),
-            shape = RoundedCornerShape(12.dp),
-            colors =
-                OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Color.Transparent,
-                    focusedBorderColor = Color.Transparent,
-                    errorBorderColor = Color.Transparent,
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White,
-                ),
         )
 
         //피드백 반영 (visible로 오류 표시 제어, 중복 if 제거 및 글자 크기 통일)
@@ -410,28 +236,13 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        Button(
-            onClick = { onRegister(email, password) },
+        PlayButton(
+            text = "회원가입",
             enabled = isRegisterEnabled,
-            modifier = Modifier.fillMaxWidth().height(54.dp),
-            //피드백 반영 (둥근 버튼 의도를 CircleShape로 명확하게 표현)
-            shape = CircleShape,
-            colors =
-                ButtonDefaults.buttonColors(
-                    disabledContainerColor = Color.White,
-                    disabledContentColor = Color(0xFFB2BABD),
-                    containerColor = Color.Black,
-                    contentColor = Color.White,
-                ),
-        ) {
-            Text(
-                text = "회원가입",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                //피드백 반영 (빠진 텍스트에 Pretendard 적용)
-                fontFamily = FontFamily(Font(R.font.pretendard_semibold)),
-            )
-        }
+            onClick = {
+                onRegister(email, password)
+            },
+        )
     }
 }
 

@@ -55,6 +55,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.sopt.play.R
+import org.sopt.play.ui.component.PlayButton
+import org.sopt.play.ui.component.PlayTextField
 
 @Composable
 fun LoginScreen(
@@ -107,9 +109,6 @@ fun LoginScreen(
     // 도약과제
     val context = LocalContext.current
 
-    var emailFocused by remember { mutableStateOf(false) }
-    var passwordFocused by remember { mutableStateOf(false) }
-
     //피드백 반영 (화면 modifier 적용 및 Figma 기준 여백 정리)
     Column(
         modifier =
@@ -141,56 +140,11 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        OutlinedTextField(
-            // value = email,
-            // onValueChange = {email = it},
+        PlayTextField(
             state = emailState,
+            placeholder = "abc@email.com",
             isError = isEmailError,
-            placeholder = {
-                Text(
-                    "abc@email.com",
-                    color = Color(0xFFD1D5D6),
-                    fontFamily = FontFamily(Font(R.font.pretendard_medium)),
-                )
-            },
-            // singleLine = true,
-            lineLimits = TextFieldLineLimits.SingleLine,
-            //피드백 반영 (Next 키는 기본 포커스 이동 동작을 사용)
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            /*keyboardActions = KeyboardActions(
-                onNext = { passwordFocusRequester.requestFocus() }
-            ),*/
-            modifier =
-                Modifier.fillMaxWidth()
-                    .onFocusChanged { emailFocused = it.isFocused }
-                    //피드백 반영 (Figma 테두리 2dp 적용, 오류와 포커스 색상 유지)
-                    .border(
-                        width = 2.dp,
-                        color =
-                            when {
-                                isEmailError -> Color.Red
-                                emailFocused -> Color(0xFF505559)
-                                else -> Color(0xFFD1D5D6)
-                            },
-                        shape = RoundedCornerShape(12.dp),
-                    ),
-            //피드백 반영 (고정 높이 대신 내부 여백 사용, 입력 글자 잘림 방지 및 Pretendard 적용)
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 15.dp),
-            textStyle =
-                TextStyle(
-                    fontFamily = FontFamily(Font(R.font.pretendard_medium)),
-                    fontSize = 14.sp,
-                    lineHeight = 20.sp,
-                ),
-            shape = RoundedCornerShape(12.dp),
-            colors =
-                OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Color.Transparent,
-                    focusedBorderColor = Color.Transparent,
-                    errorBorderColor = Color.Transparent,
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White,
-                ),
         )
 
         //피드백 반영 (visible로 오류 표시 제어, 중복 if 제거 및 글자 크기 통일)
@@ -223,65 +177,20 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        OutlinedTextField(
-            // value = password,
-            // onValueChange = { password = it },
+        PlayTextField(
             state = passwordState,
+            placeholder = "6자 이상의 비밀번호",
             isError = isPasswordError,
-            placeholder = {
-                Text(
-                    "6자 이상의 비밀번호",
-                    color = Color(0xFFD1D5D6),
-                    fontFamily = FontFamily(Font(R.font.pretendard_medium)),
-                )
-            },
-            // singleLine = true,
-
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done,
+            ),
             onKeyboardAction = {
                 keyboardController?.hide()
                 focusManager.clearFocus()
             },
-            lineLimits = TextFieldLineLimits.SingleLine,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            /*keyboardActions = KeyboardActions(
-                onDone = { keyboardController?.hide() }
-            ),*/
-            // visualTransformation = PasswordVisualTransformation(),
-            outputTransformation =
-                OutputTransformation {
-                    replace(0, length, "•".repeat(length))
-                },
-            modifier =
-                Modifier.fillMaxWidth()
-                    .onFocusChanged { passwordFocused = it.isFocused }
-                    //피드백 반영 (Figma 테두리 2dp 적용, 오류와 포커스 색상 유지)
-                    .border(
-                        width = 2.dp,
-                        color =
-                            when {
-                                isPasswordError -> Color.Red
-                                passwordFocused -> Color(0xFF505559)
-                                else -> Color(0xFFD1D5D6)
-                            },
-                        shape = RoundedCornerShape(12.dp),
-                    ),
-            //피드백 반영 (고정 높이 대신 내부 여백 사용, 입력 글자 잘림 방지 및 Pretendard 적용)
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 15.dp),
-            textStyle =
-                TextStyle(
-                    fontFamily = FontFamily(Font(R.font.pretendard_medium)),
-                    fontSize = 14.sp,
-                    lineHeight = 20.sp,
-                ),
-            shape = RoundedCornerShape(12.dp),
-            colors =
-                OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Color.Transparent,
-                    focusedBorderColor = Color.Transparent,
-                    errorBorderColor = Color.Transparent,
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White,
-                ),
+            outputTransformation = OutputTransformation {
+                replace(0, length, "•".repeat(length))
+            },
         )
 
         //피드백 반영 (visible로 오류 표시 제어, 중복 if 제거 및 글자 크기 통일)
@@ -305,8 +214,11 @@ fun LoginScreen(
         }
         Spacer(modifier = Modifier.height(32.dp))
 
+        // 공통 컴포넌트로 변경
         CompositionLocalProvider(LocalRippleConfiguration provides null) {
-            Button(
+            PlayButton(
+                text = "로그인",
+                enabled = isLoginEnabled,
                 onClick = {
                     if (
                         email == registeredEmail &&
@@ -316,30 +228,14 @@ fun LoginScreen(
                     ) {
                         onLoginClick()
                     } else {
-                        Toast.makeText(context, "로그인에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            "로그인에 실패했습니다.",
+                            Toast.LENGTH_SHORT,
+                        ).show()
                     }
                 },
-                enabled = isLoginEnabled,
-                modifier = Modifier.fillMaxWidth().height(54.dp),
-                //피드백 반영 (둥근 버튼 의도를 CircleShape로 명확하게 표현)
-                shape = CircleShape,
-                colors =
-                    ButtonDefaults.buttonColors(
-                        disabledContainerColor = Color.White,
-                        disabledContentColor = Color(0xFFB2BABD),
-                        containerColor = Color.Black,
-                        contentColor = Color.White,
-                    ),
-            ) {
-                Text(
-                    text = "로그인",
-                    //피드백 반영 (버튼 글자를 Figma 기준 14sp, SemiBold로 조정)
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    //피드백 반영 (빠진 텍스트에 Pretendard 적용)
-                    fontFamily = FontFamily(Font(R.font.pretendard_semibold)),
-                )
-            }
+            )
         }
 
         Spacer(modifier = Modifier.height(20.dp))
