@@ -24,7 +24,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
-import org.sopt.play.MainScreen
+import org.sopt.play.ui.main.MainScreen
 import org.sopt.play.R
 import org.sopt.play.ui.login.LoginScreen
 import org.sopt.play.ui.register.RegisterScreen
