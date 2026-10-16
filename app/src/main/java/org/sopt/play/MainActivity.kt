@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import org.sopt.play.navigation.PlayApp
+import org.sopt.play.ui.main.MainScreen
 
 class MainActivity : ComponentActivity() {
 
@@ -38,34 +39,5 @@ class MainActivity : ComponentActivity() {
         setContent {
             PlayApp()
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun MainScreenPreview() {
-    MainScreen()
-}
-
-@Composable
-fun MainScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = "다했긔!")
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        AsyncImage(
-            model = "https://i.pinimg.com/236x/78/ae/ab/78aeabed9cf6f2140784da692dbacb4c.jpg",
-            contentDescription = "메인 이미지",
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(240.dp),
-            contentScale = ContentScale.Fit
-        )
     }
 }

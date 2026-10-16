@@ -19,12 +19,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.OutputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.LocalRippleConfiguration
@@ -51,7 +53,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
+import org.sopt.play.ui.preview.PlayScreenPreviews
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.sopt.play.R
@@ -115,6 +117,7 @@ fun LoginScreen(
             modifier
                 .fillMaxSize()
                 .background(Color.White)
+                .verticalScroll(rememberScrollState())
                 .padding(
                     start = 16.dp,
                     end = 16.dp,
@@ -271,9 +274,53 @@ fun LoginScreen(
 }
 
 
-@Preview(showBackground = true)
+@PlayScreenPreviews
 @Composable
-private fun LoginScreenPreview() {
+private fun LoginValidPreview() {
+    LoginScreen(
+        registeredEmail = "sopt@email.com",
+        registeredPassword = "password123",
+        onRegisterClick = {},
+        onLoginClick = {},
+    )
+}
+
+@PlayScreenPreviews
+@Composable
+private fun LoginEmailErrorPreview() {
+    LoginScreen(
+        registeredEmail = "잘못된 이메일",
+        registeredPassword = "password123",
+        onRegisterClick = {},
+        onLoginClick = {},
+    )
+}
+
+@PlayScreenPreviews
+@Composable
+private fun LoginPasswordErrorPreview() {
+    LoginScreen(
+        registeredEmail = "sopt@email.com",
+        registeredPassword = "123",
+        onRegisterClick = {},
+        onLoginClick = {},
+    )
+}
+
+@PlayScreenPreviews
+@Composable
+private fun LoginBothErrorsPreview() {
+    LoginScreen(
+        registeredEmail = "잘못된 이메일",
+        registeredPassword = "123",
+        onRegisterClick = {},
+        onLoginClick = {},
+    )
+}
+
+@PlayScreenPreviews
+@Composable
+private fun LoginEmptyPreview() {
     LoginScreen(
         registeredEmail = "",
         registeredPassword = "",

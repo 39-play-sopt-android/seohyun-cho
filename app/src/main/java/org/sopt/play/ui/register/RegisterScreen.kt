@@ -28,7 +28,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
+import org.sopt.play.ui.preview.PlayScreenPreviews
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.sopt.play.R
@@ -37,19 +37,24 @@ import org.sopt.play.ui.component.PlayTextField
 
 @Composable
 fun RegisterScreen(
+
     //피드백 반영 (회원가입 화면에도 외부 modifier 전달 지원)
     modifier: Modifier = Modifier,
     onRegister: (String, String) -> Unit,
+    initialName: String = "",
+    initialEmail: String = "",
+    initialPassword: String = "",
+    initialConfirmPassword: String = "",
 ) {
     //피드백 반영 (내부 여백을 지원하는 State 기반 TextField로 입력 상태 관리)
     // 입력값 상태 관리
-    val nameState = rememberTextFieldState()
+    val nameState = rememberTextFieldState(initialText = initialName)
     val name = nameState.text.toString()
-    val emailState = rememberTextFieldState()
+    val emailState = rememberTextFieldState(initialText = initialEmail)
     val email = emailState.text.toString()
-    val passwordState = rememberTextFieldState()
+    val passwordState = rememberTextFieldState(initialText = initialPassword)
     val password = passwordState.text.toString()
-    val confirmPasswordState = rememberTextFieldState()
+    val confirmPasswordState = rememberTextFieldState(initialText = initialConfirmPassword)
     val confirmPassword = confirmPasswordState.text.toString()
 
     // 이메일 형식 검사
@@ -246,8 +251,70 @@ fun RegisterScreen(
     }
 }
 
-@Preview(showBackground = true)
+@PlayScreenPreviews
 @Composable
-private fun RegisterScreenPreview() {
-    RegisterScreen(onRegister = { _, _ -> })
+private fun RegisterValidPreview() {
+    RegisterScreen(
+        initialName = "홍길동",
+        initialEmail = "qwer1234@gmail.com",
+        initialPassword = "qwer1234",
+        initialConfirmPassword = "qwer1234",
+        onRegister = { _, _ -> },
+    )
+}
+
+@PlayScreenPreviews
+@Composable
+private fun RegisterEmptyPreview() {
+    RegisterScreen(
+        onRegister = { _, _ -> },
+    )
+}
+
+@PlayScreenPreviews
+@Composable
+private fun RegisterEmailErrorPreview() {
+    RegisterScreen(
+        initialName = "홍길동",
+        initialEmail = "잘못된 이메일",
+        initialPassword = "password123",
+        initialConfirmPassword = "password123",
+        onRegister = { _, _ -> },
+    )
+}
+
+@PlayScreenPreviews
+@Composable
+private fun RegisterPasswordErrorPreview() {
+    RegisterScreen(
+        initialName = "홍길동",
+        initialEmail = "sopt@email.com",
+        initialPassword = "123",
+        initialConfirmPassword = "123",
+        onRegister = { _, _ -> },
+    )
+}
+
+@PlayScreenPreviews
+@Composable
+private fun RegisterMismatchPreview() {
+    RegisterScreen(
+        initialName = "홍길동",
+        initialEmail = "sopt@email.com",
+        initialPassword = "password123",
+        initialConfirmPassword = "different123",
+        onRegister = { _, _ -> },
+    )
+}
+
+@PlayScreenPreviews
+@Composable
+private fun RegisterAllErrorsPreview() {
+    RegisterScreen(
+        initialName = "홍길동",
+        initialEmail = "잘못된 이메일",
+        initialPassword = "123",
+        initialConfirmPassword = "456",
+        onRegister = { _, _ -> },
+    )
 }

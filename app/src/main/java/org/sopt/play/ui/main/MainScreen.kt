@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.tooling.preview.Preview
+import org.sopt.play.ui.preview.PlayScreenPreviews
 import androidx.compose.ui.unit.sp
 import org.sopt.play.R
 import org.sopt.play.ui.home.HomeScreen
@@ -27,9 +27,10 @@ import org.sopt.play.ui.main.component.MainTab
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
+    initialTab: MainTab = MainTab.HOME,
 ) {
     var selectedTab by rememberSaveable {
-        mutableStateOf(MainTab.HOME)
+        mutableStateOf(initialTab)
     }
 
     val stateHolder = rememberSaveableStateHolder()
@@ -93,12 +94,24 @@ private fun MainPlaceholderScreen(
     }
 }
 
-@Preview(
-    showBackground = true,
-    widthDp = 360,
-    heightDp = 724,
-)
+@PlayScreenPreviews
 @Composable
 private fun MainScreenPreview() {
     MainScreen()
+}
+
+@PlayScreenPreviews
+@Composable
+private fun MainFavoriteScreenPreview() {
+    MainScreen(
+        initialTab = MainTab.FAVORITE,
+    )
+}
+
+@PlayScreenPreviews
+@Composable
+private fun MainMyPageScreenPreview() {
+    MainScreen(
+        initialTab = MainTab.MY_PAGE,
+    )
 }
