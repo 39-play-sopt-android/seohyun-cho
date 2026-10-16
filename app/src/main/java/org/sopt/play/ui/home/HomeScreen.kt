@@ -86,6 +86,7 @@ private val homeProducts = listOf(
 
 @Composable
 fun HomeScreen(
+    userName: String,
     modifier: Modifier = Modifier,
 ) {
     var selectedMenu by rememberSaveable {
@@ -154,7 +155,7 @@ fun HomeScreen(
                     }
 
                     Text(
-                        text = "김솝트님을 위한 추천 아이템",
+                        text = "${userName}님을 위한 추천 아이템",
                         fontFamily = FontFamily(
                             Font(R.font.pretendard_medium)
                         ),
@@ -209,5 +210,5 @@ fun HomeScreen(
 @PlayScreenPreviews
 @Composable
 private fun HomeScreenPreview() {
-    HomeScreen()
+    HomeScreen(userName = "김솝트")
 }

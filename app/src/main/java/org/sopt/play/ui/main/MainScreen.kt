@@ -26,6 +26,7 @@ import org.sopt.play.ui.main.component.MainTab
 
 @Composable
 fun MainScreen(
+    userName: String,
     modifier: Modifier = Modifier,
     initialTab: MainTab = MainTab.HOME,
 ) {
@@ -49,7 +50,7 @@ fun MainScreen(
                 key = selectedTab.name,
             ) {
                 when (selectedTab) {
-                    MainTab.HOME -> HomeScreen()
+                    MainTab.HOME -> HomeScreen(userName = userName)
 
                     MainTab.FAVORITE -> MainPlaceholderScreen(
                         title = "찜",
@@ -97,13 +98,14 @@ private fun MainPlaceholderScreen(
 @PlayScreenPreviews
 @Composable
 private fun MainScreenPreview() {
-    MainScreen()
+    MainScreen(userName = "김솝트")
 }
 
 @PlayScreenPreviews
 @Composable
 private fun MainFavoriteScreenPreview() {
     MainScreen(
+        userName = "김솝트",
         initialTab = MainTab.FAVORITE,
     )
 }
@@ -112,6 +114,7 @@ private fun MainFavoriteScreenPreview() {
 @Composable
 private fun MainMyPageScreenPreview() {
     MainScreen(
+        userName = "김솝트",
         initialTab = MainTab.MY_PAGE,
     )
 }

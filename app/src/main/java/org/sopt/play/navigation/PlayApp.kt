@@ -33,6 +33,7 @@ import org.sopt.play.ui.register.RegisterScreen
 fun PlayApp() {
     val navController = rememberNavController()
 
+    var registeredName by remember { mutableStateOf("") }
     var registeredEmail by remember { mutableStateOf("") }
     var registeredPassword by remember { mutableStateOf("") }
 
@@ -85,7 +86,8 @@ fun PlayApp() {
 
             composable(route = "register") {
                 RegisterScreen(
-                    onRegister = { email, password ->
+                    onRegister = { name, email, password ->
+                        registeredName = name
                         registeredEmail = email
                         registeredPassword = password
 
@@ -102,7 +104,7 @@ fun PlayApp() {
             }
 
             composable(route = "home") {
-                MainScreen()
+                MainScreen(userName = registeredName)
             }
         }
     }

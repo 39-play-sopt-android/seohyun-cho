@@ -40,7 +40,7 @@ fun RegisterScreen(
 
     //피드백 반영 (회원가입 화면에도 외부 modifier 전달 지원)
     modifier: Modifier = Modifier,
-    onRegister: (String, String) -> Unit,
+    onRegister: (String, String, String) -> Unit,
     initialName: String = "",
     initialEmail: String = "",
     initialPassword: String = "",
@@ -245,7 +245,7 @@ fun RegisterScreen(
             text = "회원가입",
             enabled = isRegisterEnabled,
             onClick = {
-                onRegister(email, password)
+                onRegister(name, email, password)
             },
         )
     }
@@ -259,7 +259,7 @@ private fun RegisterValidPreview() {
         initialEmail = "qwer1234@gmail.com",
         initialPassword = "qwer1234",
         initialConfirmPassword = "qwer1234",
-        onRegister = { _, _ -> },
+        onRegister = { _, _, _ -> },
     )
 }
 
@@ -267,7 +267,7 @@ private fun RegisterValidPreview() {
 @Composable
 private fun RegisterEmptyPreview() {
     RegisterScreen(
-        onRegister = { _, _ -> },
+        onRegister = { _, _, _ -> },
     )
 }
 
@@ -279,7 +279,7 @@ private fun RegisterEmailErrorPreview() {
         initialEmail = "잘못된 이메일",
         initialPassword = "password123",
         initialConfirmPassword = "password123",
-        onRegister = { _, _ -> },
+        onRegister = { _, _, _ -> },
     )
 }
 
@@ -291,7 +291,7 @@ private fun RegisterPasswordErrorPreview() {
         initialEmail = "sopt@email.com",
         initialPassword = "123",
         initialConfirmPassword = "123",
-        onRegister = { _, _ -> },
+        onRegister = { _, _, _ -> },
     )
 }
 
@@ -303,7 +303,7 @@ private fun RegisterMismatchPreview() {
         initialEmail = "sopt@email.com",
         initialPassword = "password123",
         initialConfirmPassword = "different123",
-        onRegister = { _, _ -> },
+        onRegister = { _, _, _ -> },
     )
 }
 
@@ -315,6 +315,6 @@ private fun RegisterAllErrorsPreview() {
         initialEmail = "잘못된 이메일",
         initialPassword = "123",
         initialConfirmPassword = "456",
-        onRegister = { _, _ -> },
+        onRegister = { _, _, _ -> },
     )
 }
