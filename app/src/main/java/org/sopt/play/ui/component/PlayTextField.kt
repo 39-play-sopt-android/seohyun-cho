@@ -72,7 +72,7 @@ fun PlayTextField(
             .fillMaxWidth()
             .onFocusChanged { isFocused = it.isFocused }
             .border(width = 2.dp, color = borderColor, shape = shape),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 15.dp),
+        contentPadding = PaddingValues(all= 16.dp),
         textStyle = TextStyle(
             fontFamily = FontFamily(Font(R.font.pretendard_medium)),
             fontSize = 14.sp,
