@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontFamily
 import org.sopt.play.ui.preview.PlayScreenPreviews
 import androidx.compose.ui.unit.sp
 import org.sopt.play.R
+import org.sopt.play.ui.home.HomeUiState
 import org.sopt.play.ui.home.HomeScreen
 import org.sopt.play.ui.main.component.MainBottomBar
 import org.sopt.play.ui.main.component.MainTab
@@ -29,6 +30,10 @@ fun MainScreen(
     userName: String,
     modifier: Modifier = Modifier,
     initialTab: MainTab = MainTab.HOME,
+    homeUiState: HomeUiState = HomeUiState(),
+    onMenuClick: (String) -> Unit = {},
+    onCategoryClick: (String) -> Unit = {},
+    onFavoriteClick: (Int) -> Unit = {},
 ) {
     var selectedTab by rememberSaveable {
         mutableStateOf(initialTab)
@@ -50,7 +55,13 @@ fun MainScreen(
                 key = selectedTab.name,
             ) {
                 when (selectedTab) {
-                    MainTab.HOME -> HomeScreen(userName = userName)
+                    MainTab.HOME -> HomeScreen(
+                        userName = userName,
+                        uiState = homeUiState,
+                        onMenuClick = onMenuClick,
+                        onCategoryClick = onCategoryClick,
+                        onFavoriteClick = onFavoriteClick,
+                    )
 
                     MainTab.FAVORITE -> MainPlaceholderScreen(
                         title = "찜",

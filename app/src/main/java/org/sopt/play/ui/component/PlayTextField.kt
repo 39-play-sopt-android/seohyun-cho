@@ -3,16 +3,11 @@ package org.sopt.play.ui.component
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.KeyboardActionHandler
-import androidx.compose.foundation.text.input.OutputTransformation
-import androidx.compose.foundation.text.input.TextFieldLineLimits
-import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -30,6 +25,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.sopt.play.R
@@ -37,13 +34,14 @@ import org.sopt.play.ui.preview.PlayScreenPreviews
 
 @Composable
 fun PlayTextField(
-    state: TextFieldState,
+    value: String,
+    onValueChange: (String) -> Unit,
     placeholder: String,
     modifier: Modifier = Modifier,
     isError: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    onKeyboardAction: KeyboardActionHandler? = null,
-    outputTransformation: OutputTransformation? = null,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
 ) {
     var isFocused by remember { mutableStateOf(false) }
 
@@ -55,7 +53,8 @@ fun PlayTextField(
     }
 
     OutlinedTextField(
-        state = state,
+        value = value,
+        onValueChange = onValueChange,
         isError = isError,
         placeholder = {
             Text(
@@ -64,15 +63,14 @@ fun PlayTextField(
                 fontFamily = FontFamily(Font(R.font.pretendard_medium)),
             )
         },
-        lineLimits = TextFieldLineLimits.SingleLine,
         keyboardOptions = keyboardOptions,
-        onKeyboardAction = onKeyboardAction,
-        outputTransformation = outputTransformation,
+        singleLine = true,
+        keyboardActions = keyboardActions,
+        visualTransformation = visualTransformation,
         modifier = modifier
             .fillMaxWidth()
             .onFocusChanged { isFocused = it.isFocused }
             .border(width = 2.dp, color = borderColor, shape = shape),
-        contentPadding = PaddingValues(all= 16.dp),
         textStyle = TextStyle(
             fontFamily = FontFamily(Font(R.font.pretendard_medium)),
             fontSize = 14.sp,
@@ -92,23 +90,15 @@ fun PlayTextField(
 @PlayScreenPreviews
 @Composable
 private fun PlayTextFieldPreview() {
-    val emptyState = rememberTextFieldState()
+    val emptyState = remember { mutableStateOf("") }
 
-    val filledState = rememberTextFieldState(
-        initialText = "sopt@email.com",
-    )
+    val filledState = remember { mutableStateOf("sopt@email.com") }
 
-    val errorState = rememberTextFieldState(
-        initialText = "잘못된 이메일",
-    )
+    val errorState = remember { mutableStateOf("잘못된 이메일") }
 
-    val focusedState = rememberTextFieldState(
-        initialText = "입력 중",
-    )
+    val focusedState = remember { mutableStateOf("입력 중") }
 
-    val passwordState = rememberTextFieldState(
-        initialText = "password123",
-    )
+    val passwordState = remember { mutableStateOf("password123") }
 
     val focusRequester = remember { FocusRequester() }
 
@@ -123,21 +113,24 @@ private fun PlayTextFieldPreview() {
         Text(text = "기본 · 비어 있음")
 
         PlayTextField(
-            state = emptyState,
+            value = emptyState.value,
+            onValueChange = { emptyState.value = it },
             placeholder = "abc@email.com",
         )
 
         Text(text = "입력 완료")
 
         PlayTextField(
-            state = filledState,
+            value = filledState.value,
+            onValueChange = { filledState.value = it },
             placeholder = "abc@email.com",
         )
 
         Text(text = "오류")
 
         PlayTextField(
-            state = errorState,
+            value = errorState.value,
+            onValueChange = { errorState.value = it },
             placeholder = "abc@email.com",
             isError = true,
         )
@@ -145,7 +138,8 @@ private fun PlayTextFieldPreview() {
         Text(text = "포커스")
 
         PlayTextField(
-            state = focusedState,
+            value = focusedState.value,
+            onValueChange = { focusedState.value = it },
             placeholder = "내용을 입력해주세요",
             modifier = Modifier.focusRequester(focusRequester),
         )
@@ -153,11 +147,10 @@ private fun PlayTextFieldPreview() {
         Text(text = "비밀번호")
 
         PlayTextField(
-            state = passwordState,
+            value = passwordState.value,
+            onValueChange = { passwordState.value = it },
             placeholder = "6자 이상의 비밀번호",
-            outputTransformation = OutputTransformation {
-                replace(0, length, "•".repeat(length))
-            },
+            visualTransformation = PasswordVisualTransformation(),
         )
     }
 }
