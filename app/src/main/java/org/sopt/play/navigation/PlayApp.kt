@@ -28,13 +28,17 @@ import org.sopt.play.ui.home.HomeRoute
 import org.sopt.play.ui.login.LoginScreen
 import org.sopt.play.ui.register.RegisterRoute
 
+private data class RegisteredUser(
+    val name: String = "",
+    val email: String = "",
+    val password: String = "",
+)
+
 @Composable
 fun PlayApp() {
     val navController = rememberNavController()
 
-    var registeredName by remember { mutableStateOf("") }
-    var registeredEmail by remember { mutableStateOf("") }
-    var registeredPassword by remember { mutableStateOf("") }
+    var registeredUser by remember { mutableStateOf(RegisteredUser()) }
 
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
@@ -65,10 +69,12 @@ fun PlayApp() {
         ) {
             composable(route = "login") {
                 LoginRoute(
-                    registeredEmail = registeredEmail,
-                    registeredPassword = registeredPassword,
+                    registeredEmail = registeredUser.email,
+                    registeredPassword = registeredUser.password,
                     onRegisterClick = {
-                        navController.navigate("register")
+                        navController.navigate("register") {
+                            launchSingleTop = true
+                        }
                     },
                     onLoginClick = {
                         navController.navigate("home") {
@@ -84,9 +90,7 @@ fun PlayApp() {
             composable(route = "register") {
                 RegisterRoute(
                     onRegister = { name, email, password ->
-                        registeredName = name
-                        registeredEmail = email
-                        registeredPassword = password
+                        registeredUser = RegisteredUser(name, email, password)
 
                         navController.popBackStack()
 
@@ -101,7 +105,7 @@ fun PlayApp() {
             }
 
             composable(route = "home") {
-                HomeRoute(userName = registeredName)
+                HomeRoute(userName = registeredUser.name)
             }
         }
     }

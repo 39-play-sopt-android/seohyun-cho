@@ -49,7 +49,7 @@ fun ProductCard(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(160f / 200f),
+                .aspectRatio(4f / 5f),
         ) {
             Image(
                 painter = painterResource(product.imageRes),
@@ -96,7 +96,7 @@ fun ProductCard(
                 text = product.name,
                 style = mediumStyle.copy(
                     fontFamily = FontFamily(
-                        Font(R.font.pretendard_medium)
+                        Font(R.font.pretendard_regular)
                     ),
                 ),
                 maxLines = 1,
