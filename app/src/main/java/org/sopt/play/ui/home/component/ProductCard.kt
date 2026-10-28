@@ -2,6 +2,8 @@ package org.sopt.play.ui.home.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -40,14 +43,26 @@ fun ProductCard(
     )
 
     Column(modifier = modifier) {
-        Image(
-            painter = painterResource(product.imageRes),
-            contentDescription = product.name,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(160f / 200f),
-        )
+        Box {
+            Image(
+                painter = painterResource(product.imageRes),
+                contentDescription = product.name,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(4f / 5f),
+            )
+            Image(
+                painter = painterResource(
+                    if (product.isFavorite) R.drawable.favorite_fill else R.drawable.favorite,
+                ),
+                contentDescription = if (product.isFavorite) "좋아요 선택됨" else "좋아요 선택 안 됨",
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(8.dp)
+                    .size(24.dp),
+            )
+        }
 
         Column(
             modifier = Modifier
@@ -71,7 +86,7 @@ fun ProductCard(
                 text = product.name,
                 style = mediumStyle.copy(
                     fontFamily = FontFamily(
-                        Font(R.font.pretendard_medium)
+                        Font(R.font.pretendard_regular)
                     ),
                 ),
                 maxLines = 1,
@@ -124,6 +139,7 @@ private fun ProductCardPreview() {
         ProductCard(
             product = Product(
                 id = 2,
+                isFavorite = true,
                 imageRes = R.drawable.img_product_empty,
                 brand = "어텀",
                 name = "보울7부티셔츠",

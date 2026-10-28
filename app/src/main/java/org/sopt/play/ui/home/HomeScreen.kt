@@ -110,7 +110,6 @@ fun HomeScreen(
             columns = GridCells.Fixed(2),
             modifier = Modifier.weight(1f),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(15.dp),
             contentPadding = PaddingValues(bottom = 96.dp),
         ) {
             item(

@@ -2,9 +2,8 @@ package org.sopt.play.ui.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
@@ -32,8 +31,8 @@ fun PlayButton(
         onClick = onClick,
         enabled = enabled,
         modifier = modifier
-            .fillMaxWidth()
-            .height(49.dp),
+            .fillMaxWidth(),
+        contentPadding = PaddingValues(horizontal = 24.dp, vertical = 14.dp),
         shape = CircleShape,
         colors = ButtonDefaults.buttonColors(
             containerColor = Color(0xFF121212),

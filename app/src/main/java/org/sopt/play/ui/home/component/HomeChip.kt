@@ -56,7 +56,7 @@ fun HomeChip(
             )
             .padding(
                 horizontal = 12.dp,
-                vertical = 7.5.dp,
+                vertical = 8.dp,
             ),
     )
 }
