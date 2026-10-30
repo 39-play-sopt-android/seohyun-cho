@@ -1,6 +1,5 @@
 package org.sopt.play.ui.register
 
-import android.util.Patterns
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -14,9 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.OutputTransformation
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,59 +26,27 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import org.sopt.play.ui.preview.PlayScreenPreviews
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.sopt.play.R
 import org.sopt.play.ui.component.PlayButton
 import org.sopt.play.ui.component.PlayTextField
+import org.sopt.play.ui.preview.PlayScreenPreviews
 
 @Composable
 fun RegisterScreen(
-
-    //피드백 반영 (회원가입 화면에도 외부 modifier 전달 지원)
+    uiState: RegisterUiState,
+    onNameChange: (String) -> Unit,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onConfirmPasswordChange: (String) -> Unit,
+    onRegisterClick: () -> Unit,
     modifier: Modifier = Modifier,
-    onRegister: (String, String, String) -> Unit,
-    initialName: String = "",
-    initialEmail: String = "",
-    initialPassword: String = "",
-    initialConfirmPassword: String = "",
 ) {
-    //피드백 반영 (내부 여백을 지원하는 State 기반 TextField로 입력 상태 관리)
-    // 입력값 상태 관리
-    val nameState = rememberTextFieldState(initialText = initialName)
-    val name = nameState.text.toString()
-    val emailState = rememberTextFieldState(initialText = initialEmail)
-    val email = emailState.text.toString()
-    val passwordState = rememberTextFieldState(initialText = initialPassword)
-    val password = passwordState.text.toString()
-    val confirmPasswordState = rememberTextFieldState(initialText = initialConfirmPassword)
-    val confirmPassword = confirmPasswordState.text.toString()
-
-    // 이메일 형식 검사
-    val isEmailError = email.isNotEmpty() && !Patterns.EMAIL_ADDRESS.matcher(email).matches()
-
-    // 비밀번호 6자 이상 검사
-    val isPasswordError = password.isNotEmpty() && password.length < 6
-
-    // 비밀번호 일치 검사
-    val isConfirmPasswordError = confirmPassword.isNotEmpty() && confirmPassword != password
-
-    // 정보 미입력란(빈칸) 검사
-    val isRegisterEnabled =
-        name.isNotEmpty() &&
-                email.isNotEmpty() &&
-                password.isNotEmpty() &&
-                confirmPassword.isNotEmpty() &&
-                !isEmailError &&
-                !isPasswordError &&
-                !isConfirmPasswordError
-
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
-
-    //피드백 반영 (화면 modifier 적용 및 Figma 기준 여백 정리)
     Column(
         modifier =
             modifier
@@ -113,7 +79,8 @@ fun RegisterScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         PlayTextField(
-            state = nameState,
+            value = uiState.name,
+            onValueChange = onNameChange,
             placeholder = "홍길동",
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
         )
@@ -130,18 +97,19 @@ fun RegisterScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         PlayTextField(
-            state = emailState,
+            value = uiState.email,
+            onValueChange = onEmailChange,
             placeholder = "abc@email.com",
-            isError = isEmailError,
+            isError = uiState.isEmailError,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
         )
-        //피드백 반영 (visible로 오류 표시 제어, 중복 if 제거 및 글자 크기 통일)
+
         AnimatedVisibility(
-            visible = isEmailError,
+            visible = uiState.isEmailError,
             enter = fadeIn() + expandVertically(),
             exit = fadeOut() + shrinkVertically(),
         ) {
-            //피드백 반영 (오류 문구와 여백이 겹치지 않도록 세로 배치)
+
             Column {
                 Spacer(modifier = Modifier.height(4.dp))
 
@@ -166,22 +134,20 @@ fun RegisterScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         PlayTextField(
-            state = passwordState,
+            value = uiState.password,
+            onValueChange = onPasswordChange,
             placeholder = "6자 이상의 비밀번호",
-            isError = isPasswordError,
+            isError = uiState.isPasswordError,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            outputTransformation = OutputTransformation {
-                replace(0, length, "•".repeat(length))
-            },
+            visualTransformation = PasswordVisualTransformation(),
         )
 
-        //피드백 반영 (visible로 오류 표시 제어, 중복 if 제거 및 글자 크기 통일)
         AnimatedVisibility(
-            visible = isPasswordError,
+            visible = uiState.isPasswordError,
             enter = fadeIn() + expandVertically(),
             exit = fadeOut() + shrinkVertically(),
         ) {
-            //피드백 반영 (오류 문구와 여백이 겹치지 않도록 세로 배치)
+
             Column {
                 Spacer(modifier = Modifier.height(4.dp))
 
@@ -189,7 +155,7 @@ fun RegisterScreen(
                     text = "비밀번호는 6자 이상 입력해주세요.",
                     fontSize = 14.sp,
                     color = Color.Red,
-                    //피드백 반영 (빠진 텍스트에 Pretendard 적용)
+
                     fontFamily = FontFamily(Font(R.font.pretendard_medium)),
                 )
             }
@@ -207,26 +173,26 @@ fun RegisterScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         PlayTextField(
-            state = confirmPasswordState,
+            value = uiState.confirmPassword,
+            onValueChange = onConfirmPasswordChange,
             placeholder = "6자 이상의 비밀번호",
-            isError = isConfirmPasswordError,
+            isError = uiState.isConfirmPasswordError,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            onKeyboardAction = {
-                keyboardController?.hide()
-                focusManager.clearFocus()
-            },
-            outputTransformation = OutputTransformation {
-                replace(0, length, "•".repeat(length))
-            },
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                },
+            ),
+            visualTransformation = PasswordVisualTransformation(),
         )
 
-        //피드백 반영 (visible로 오류 표시 제어, 중복 if 제거 및 글자 크기 통일)
         AnimatedVisibility(
-            visible = isConfirmPasswordError,
+            visible = uiState.isConfirmPasswordError,
             enter = fadeIn() + expandVertically(),
             exit = fadeOut() + shrinkVertically(),
         ) {
-            //피드백 반영 (오류 문구와 여백이 겹치지 않도록 세로 배치)
+
             Column {
                 Spacer(modifier = Modifier.height(4.dp))
 
@@ -243,10 +209,8 @@ fun RegisterScreen(
 
         PlayButton(
             text = "회원가입",
-            enabled = isRegisterEnabled,
-            onClick = {
-                onRegister(name, email, password)
-            },
+            enabled = uiState.isRegisterEnabled,
+            onClick = onRegisterClick,
         )
     }
 }
@@ -255,11 +219,17 @@ fun RegisterScreen(
 @Composable
 private fun RegisterValidPreview() {
     RegisterScreen(
-        initialName = "홍길동",
-        initialEmail = "qwer1234@gmail.com",
-        initialPassword = "qwer1234",
-        initialConfirmPassword = "qwer1234",
-        onRegister = { _, _, _ -> },
+        uiState = RegisterUiState(
+            name = "홍길동",
+            email = "qwer1234@gmail.com",
+            password = "qwer1234",
+            confirmPassword = "qwer1234",
+        ),
+        onNameChange = {},
+        onEmailChange = {},
+        onPasswordChange = {},
+        onConfirmPasswordChange = {},
+        onRegisterClick = {},
     )
 }
 
@@ -267,7 +237,12 @@ private fun RegisterValidPreview() {
 @Composable
 private fun RegisterEmptyPreview() {
     RegisterScreen(
-        onRegister = { _, _, _ -> },
+        uiState = RegisterUiState(),
+        onNameChange = {},
+        onEmailChange = {},
+        onPasswordChange = {},
+        onConfirmPasswordChange = {},
+        onRegisterClick = {},
     )
 }
 
@@ -275,11 +250,17 @@ private fun RegisterEmptyPreview() {
 @Composable
 private fun RegisterEmailErrorPreview() {
     RegisterScreen(
-        initialName = "홍길동",
-        initialEmail = "잘못된 이메일",
-        initialPassword = "password123",
-        initialConfirmPassword = "password123",
-        onRegister = { _, _, _ -> },
+        uiState = RegisterUiState(
+            name = "홍길동",
+            email = "잘못된 이메일",
+            password = "password123",
+            confirmPassword = "password123",
+        ),
+        onNameChange = {},
+        onEmailChange = {},
+        onPasswordChange = {},
+        onConfirmPasswordChange = {},
+        onRegisterClick = {},
     )
 }
 
@@ -287,11 +268,17 @@ private fun RegisterEmailErrorPreview() {
 @Composable
 private fun RegisterPasswordErrorPreview() {
     RegisterScreen(
-        initialName = "홍길동",
-        initialEmail = "sopt@email.com",
-        initialPassword = "123",
-        initialConfirmPassword = "123",
-        onRegister = { _, _, _ -> },
+        uiState = RegisterUiState(
+            name = "홍길동",
+            email = "sopt@email.com",
+            password = "123",
+            confirmPassword = "123",
+        ),
+        onNameChange = {},
+        onEmailChange = {},
+        onPasswordChange = {},
+        onConfirmPasswordChange = {},
+        onRegisterClick = {},
     )
 }
 
@@ -299,11 +286,17 @@ private fun RegisterPasswordErrorPreview() {
 @Composable
 private fun RegisterMismatchPreview() {
     RegisterScreen(
-        initialName = "홍길동",
-        initialEmail = "sopt@email.com",
-        initialPassword = "password123",
-        initialConfirmPassword = "different123",
-        onRegister = { _, _, _ -> },
+        uiState = RegisterUiState(
+            name = "홍길동",
+            email = "sopt@email.com",
+            password = "password123",
+            confirmPassword = "different123",
+        ),
+        onNameChange = {},
+        onEmailChange = {},
+        onPasswordChange = {},
+        onConfirmPasswordChange = {},
+        onRegisterClick = {},
     )
 }
 
@@ -311,10 +304,16 @@ private fun RegisterMismatchPreview() {
 @Composable
 private fun RegisterAllErrorsPreview() {
     RegisterScreen(
-        initialName = "홍길동",
-        initialEmail = "잘못된 이메일",
-        initialPassword = "123",
-        initialConfirmPassword = "456",
-        onRegister = { _, _, _ -> },
+        uiState = RegisterUiState(
+            name = "홍길동",
+            email = "잘못된 이메일",
+            password = "123",
+            confirmPassword = "456",
+        ),
+        onNameChange = {},
+        onEmailChange = {},
+        onPasswordChange = {},
+        onConfirmPasswordChange = {},
+        onRegisterClick = {},
     )
 }

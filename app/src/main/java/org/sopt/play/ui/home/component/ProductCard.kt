@@ -3,13 +3,15 @@ package org.sopt.play.ui.home.component
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,15 +26,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.sopt.play.R
-import org.sopt.play.ui.home.Product
 import java.text.NumberFormat
 import java.util.Locale
+import org.sopt.play.R
+import org.sopt.play.ui.home.Product
 
 @Composable
 fun ProductCard(
     product: Product,
     modifier: Modifier = Modifier,
+    onFavoriteClick: () -> Unit = {},
 ) {
     val mediumStyle = TextStyle(
         fontFamily = FontFamily(Font(R.font.pretendard_medium)),
@@ -43,25 +46,32 @@ fun ProductCard(
     )
 
     Column(modifier = modifier) {
-        Box {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(4f / 5f),
+        ) {
             Image(
                 painter = painterResource(product.imageRes),
                 contentDescription = product.name,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(4f / 5f),
+                modifier = Modifier.matchParentSize(),
             )
-            Image(
-                painter = painterResource(
-                    if (product.isFavorite) R.drawable.favorite_fill else R.drawable.favorite,
-                ),
-                contentDescription = if (product.isFavorite) "좋아요 선택됨" else "좋아요 선택 안 됨",
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(8.dp)
-                    .size(24.dp),
-            )
+
+            IconButton(
+                onClick = onFavoriteClick,
+                modifier = Modifier.align(Alignment.BottomEnd),
+            ) {
+                Icon(
+                    painter = painterResource(
+                        if (product.isFavorite) R.drawable.favorite_fill
+                        else R.drawable.favorite,
+                    ),
+                    contentDescription = if (product.isFavorite) "좋아요 취소" else "좋아요",
+                    tint = if (product.isFavorite) Color(0xFFFF4D4D) else Color.White,
+                    modifier = Modifier.size(24.dp),
+                )
+            }
         }
 
         Column(
@@ -127,7 +137,7 @@ private fun ProductCardPreview() {
         ProductCard(
             product = Product(
                 id = 1,
-                imageRes = R.drawable.img_product_empty,
+                imageRes = R.drawable.img_product_1,
                 brand = "만약에 이 브랜드명이 엄청 길다면 넌 어떻게 할건데",
                 name = "만약에 이 상품명이 엄청 길다면 넌 어떻게 할건데",
                 discountRate = 36,
@@ -140,7 +150,7 @@ private fun ProductCardPreview() {
             product = Product(
                 id = 2,
                 isFavorite = true,
-                imageRes = R.drawable.img_product_empty,
+                imageRes = R.drawable.img_product_2,
                 brand = "어텀",
                 name = "보울7부티셔츠",
                 discountRate = 10,
