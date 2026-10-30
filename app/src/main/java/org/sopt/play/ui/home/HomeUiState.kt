@@ -20,7 +20,7 @@ internal val homeBanners = listOf(
 internal val homeProducts = listOf(
     Product(
         id = 1,
-        imageRes = R.drawable.img_product_placeholder,
+        imageRes = R.drawable.img_product_1,
         brand = "트랜디어패럴",
         name = "[카프리1위/5부,7부,9부기장/MADE] 클립 스판 슬릿 바이커 카프리 데님 팬츠",
         discountRate = 36,
@@ -28,7 +28,7 @@ internal val homeProducts = listOf(
     ),
     Product(
         id = 2,
-        imageRes = R.drawable.img_product_placeholder,
+        imageRes = R.drawable.img_product_2,
         brand = "슬로우앤드",
         name = "[가을/3기장선택!] 모먼트 투커버 올데이슬랙스",
         discountRate = 50,
@@ -36,7 +36,7 @@ internal val homeProducts = listOf(
     ),
     Product(
         id = 3,
-        imageRes = R.drawable.img_product_placeholder,
+        imageRes = R.drawable.img_product_3,
         brand = "어텀",
         name = "보울7부티셔츠",
         discountRate = 10,
@@ -44,7 +44,7 @@ internal val homeProducts = listOf(
     ),
     Product(
         id = 4,
-        imageRes = R.drawable.img_product_placeholder,
+        imageRes = R.drawable.img_product_4,
         brand = "슬로우앤드",
         name = "[오픈할인중] 도브 클래식 탄탄핏 무지셔츠",
         discountRate = 40,

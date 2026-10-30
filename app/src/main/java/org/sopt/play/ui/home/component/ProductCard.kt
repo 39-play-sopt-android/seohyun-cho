@@ -137,7 +137,7 @@ private fun ProductCardPreview() {
         ProductCard(
             product = Product(
                 id = 1,
-                imageRes = R.drawable.img_product_placeholder,
+                imageRes = R.drawable.img_product_1,
                 brand = "만약에 이 브랜드명이 엄청 길다면 넌 어떻게 할건데",
                 name = "만약에 이 상품명이 엄청 길다면 넌 어떻게 할건데",
                 discountRate = 36,
@@ -150,7 +150,7 @@ private fun ProductCardPreview() {
             product = Product(
                 id = 2,
                 isFavorite = true,
-                imageRes = R.drawable.img_product_placeholder,
+                imageRes = R.drawable.img_product_2,
                 brand = "어텀",
                 name = "보울7부티셔츠",
                 discountRate = 10,
