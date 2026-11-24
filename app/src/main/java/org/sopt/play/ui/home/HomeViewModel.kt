@@ -4,20 +4,30 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import org.sopt.play.ui.home.model.HomeCategory
+import org.sopt.play.ui.home.model.HomeMenu
 
 class HomeViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState = _uiState.asStateFlow()
 
-    fun onMenuClick(menu: String) {
+    fun onMenuClick(menu: HomeMenu) {
         _uiState.update { state ->
-            if (menu in state.menus) state.copy(selectedMenu = menu) else state
+            if (menu in state.menus) {
+                state.copy(selectedMenu = menu)
+            } else {
+                state
+            }
         }
     }
 
-    fun onCategoryClick(category: String) {
+    fun onCategoryClick(category: HomeCategory) {
         _uiState.update { state ->
-            if (category in state.categories) state.copy(selectedCategory = category) else state
+            if (category in state.categories) {
+                state.copy(selectedCategory = category)
+            } else {
+                state
+            }
         }
     }
 

@@ -18,6 +18,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
@@ -29,10 +30,34 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import org.sopt.play.R
 import org.sopt.play.ui.component.PlayButton
 import org.sopt.play.ui.component.PlayTextField
 import org.sopt.play.ui.preview.PlayScreenPreviews
+
+@Composable
+fun RegisterRoute(
+    onRegister: (String, String, String) -> Unit,
+    viewModel: RegisterViewModel = viewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    RegisterScreen(
+        uiState = uiState,
+        onNameChange = viewModel::onNameChange,
+        onEmailChange = viewModel::onEmailChange,
+        onPasswordChange = viewModel::onPasswordChange,
+        onConfirmPasswordChange = viewModel::onConfirmPasswordChange,
+        onRegisterClick = {
+            viewModel.register()?.let { state ->
+                onRegister(state.name, state.email, state.password)
+            }
+        },
+    )
+}
+
 
 @Composable
 fun RegisterScreen(

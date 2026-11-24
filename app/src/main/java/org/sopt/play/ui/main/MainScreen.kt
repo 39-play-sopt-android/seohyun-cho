@@ -22,6 +22,8 @@ import androidx.compose.ui.unit.sp
 import org.sopt.play.R
 import org.sopt.play.ui.home.HomeUiState
 import org.sopt.play.ui.home.HomeScreen
+import org.sopt.play.ui.home.model.HomeCategory
+import org.sopt.play.ui.home.model.HomeMenu
 import org.sopt.play.ui.main.component.MainBottomBar
 import org.sopt.play.ui.main.component.MainTab
 
@@ -31,8 +33,8 @@ fun MainScreen(
     modifier: Modifier = Modifier,
     initialTab: MainTab = MainTab.HOME,
     homeUiState: HomeUiState = HomeUiState(),
-    onMenuClick: (String) -> Unit = {},
-    onCategoryClick: (String) -> Unit = {},
+    onMenuClick: (HomeMenu) -> Unit = {},
+    onCategoryClick: (HomeCategory) -> Unit = {},
     onFavoriteClick: (Int) -> Unit = {},
 ) {
     var selectedTab by rememberSaveable {

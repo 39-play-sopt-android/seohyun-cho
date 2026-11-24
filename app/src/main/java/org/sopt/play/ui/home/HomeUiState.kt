@@ -1,15 +1,8 @@
 package org.sopt.play.ui.home
 
 import org.sopt.play.R
-
-private val homeMenus = listOf(
-    "2배적립", "홈", "셀렉티드", "브랜드", "뷰티", "라이프", "랭킹",
-)
-
-private val homeCategories = listOf(
-    "전체", "상의", "팬츠", "원피스", "아우터",
-    "스커트", "슈즈", "가방", "이너웨어/잠옷", "폰꾸미기",
-)
+import org.sopt.play.ui.home.model.HomeCategory
+import org.sopt.play.ui.home.model.HomeMenu
 
 private val homeBanners = listOf(
     R.drawable.img_banner_1,
@@ -53,10 +46,10 @@ private val homeProducts = listOf(
 )
 
 data class HomeUiState(
-    val menus: List<String> = homeMenus,
-    val categories: List<String> = homeCategories,
+    val menus: List<HomeMenu> = HomeMenu.entries.toList(),
+    val categories: List<HomeCategory> = HomeCategory.entries.toList(),
     val banners: List<Int> = homeBanners,
     val products: List<Product> = homeProducts,
-    val selectedMenu: String = "홈",
-    val selectedCategory: String = "전체",
+    val selectedMenu: HomeMenu = HomeMenu.HOME,
+    val selectedCategory: HomeCategory = HomeCategory.ALL,
 )

@@ -17,26 +17,49 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import org.sopt.play.R
 import org.sopt.play.ui.home.component.HomeBanner
 import org.sopt.play.ui.home.component.HomeChip
 import org.sopt.play.ui.home.component.HomeTab
 import org.sopt.play.ui.home.component.HomeTopBar
 import org.sopt.play.ui.home.component.ProductCard
+import org.sopt.play.ui.home.model.HomeCategory
+import org.sopt.play.ui.home.model.HomeMenu
+import org.sopt.play.ui.main.MainScreen
 import org.sopt.play.ui.preview.PlayScreenPreviews
+
+@Composable
+fun HomeRoute(
+    userName: String,
+    viewModel: HomeViewModel = viewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    MainScreen(
+        userName = userName,
+        homeUiState = uiState,
+        onMenuClick = viewModel::onMenuClick,
+        onCategoryClick = viewModel::onCategoryClick,
+        onFavoriteClick = viewModel::onFavoriteClick,
+    )
+}
+
 
 @Composable
 fun HomeScreen(
     userName: String,
     uiState: HomeUiState,
-    onMenuClick: (String) -> Unit,
-    onCategoryClick: (String) -> Unit,
+    onMenuClick: (HomeMenu) -> Unit,
+    onCategoryClick: (HomeCategory) -> Unit,
     onFavoriteClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -64,10 +87,10 @@ fun HomeScreen(
                     ) {
                         items(
                             items = uiState.menus,
-                            key = { it },
+                            key = { it.name },
                         ) { menu ->
                             HomeTab(
-                                text = menu,
+                                text = menu.title,
                                 selected = menu == uiState.selectedMenu,
                                 onClick = {
                                     onMenuClick(menu)
@@ -120,10 +143,10 @@ fun HomeScreen(
                     ) {
                         items(
                             items = uiState.categories,
-                            key = { it },
+                            key = { it.title },
                         ) { category ->
                             HomeChip(
-                                text = category,
+                                text = category.title,
                                 selected = category == uiState.selectedCategory,
                                 onClick = {
                                     onCategoryClick(category)

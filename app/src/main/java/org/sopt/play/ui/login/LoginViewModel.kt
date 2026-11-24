@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import org.sopt.play.ui.login.model.LoginStatus
 
 class LoginViewModel : ViewModel() {
 
@@ -40,14 +41,28 @@ class LoginViewModel : ViewModel() {
     fun login(
         registeredEmail: String,
         registeredPassword: String,
-    ): Boolean {
-        val currentState = _uiState.value
-
-        return currentState.isLoginEnabled &&
+    ) {
+        _uiState.update { currentState ->
+            val isCredentialsMatch =
                 registeredEmail.isNotEmpty() &&
-                registeredPassword.isNotEmpty() &&
-                currentState.email == registeredEmail &&
-                currentState.password == registeredPassword
+                        registeredPassword.isNotEmpty() &&
+                        currentState.email == registeredEmail &&
+                        currentState.password == registeredPassword
+
+            val loginStatus =
+                if (currentState.isLoginEnabled && isCredentialsMatch) {
+                    LoginStatus.SUCCESS
+                } else {
+                    LoginStatus.FAILURE
+                }
+
+            currentState.copy(loginStatus = loginStatus)
+        }
     }
 
+    fun onLoginResultHandled() {
+        _uiState.update { currentState ->
+            currentState.copy(loginStatus = LoginStatus.IDLE)
+        }
+    }
 }

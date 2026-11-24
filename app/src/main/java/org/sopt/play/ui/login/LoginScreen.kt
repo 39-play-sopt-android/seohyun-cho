@@ -1,5 +1,6 @@
 package org.sopt.play.ui.login
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -24,9 +25,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.Font
@@ -36,10 +40,66 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import org.sopt.play.R
 import org.sopt.play.ui.component.PlayButton
 import org.sopt.play.ui.component.PlayTextField
+import org.sopt.play.ui.login.model.LoginStatus
 import org.sopt.play.ui.preview.PlayScreenPreviews
+
+@Composable
+fun LoginRoute(
+    registeredEmail: String,
+    registeredPassword: String,
+    onRegisterClick: () -> Unit,
+    onLoginClick: () -> Unit,
+    viewModel: LoginViewModel = viewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    LaunchedEffect(registeredEmail, registeredPassword) {
+        viewModel.setRegisteredCredentials(
+            email = registeredEmail,
+            password = registeredPassword,
+        )
+    }
+
+    LaunchedEffect(uiState.loginStatus) {
+        when (uiState.loginStatus) {
+            LoginStatus.IDLE -> Unit
+
+            LoginStatus.SUCCESS -> {
+                onLoginClick()
+                viewModel.onLoginResultHandled()
+            }
+
+            LoginStatus.FAILURE -> {
+                Toast.makeText(
+                    context,
+                    "로그인에 실패했습니다.",
+                    Toast.LENGTH_SHORT,
+                ).show()
+
+                viewModel.onLoginResultHandled()
+            }
+        }
+    }
+
+    LoginScreen(
+        uiState = uiState,
+        onEmailChange = viewModel::onEmailChange,
+        onPasswordChange = viewModel::onPasswordChange,
+        onRegisterClick = onRegisterClick,
+        onLoginClick = {
+            viewModel.login(
+                registeredEmail = registeredEmail,
+                registeredPassword = registeredPassword,
+            )
+        },
+    )
+}
 
 @Composable
 fun LoginScreen(
