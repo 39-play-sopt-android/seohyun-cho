@@ -2,22 +2,22 @@ package org.sopt.play.ui.home
 
 import org.sopt.play.R
 
-internal val homeMenus = listOf(
+private val homeMenus = listOf(
     "2배적립", "홈", "셀렉티드", "브랜드", "뷰티", "라이프", "랭킹",
 )
 
-internal val homeCategories = listOf(
+private val homeCategories = listOf(
     "전체", "상의", "팬츠", "원피스", "아우터",
     "스커트", "슈즈", "가방", "이너웨어/잠옷", "폰꾸미기",
 )
 
-internal val homeBanners = listOf(
+private val homeBanners = listOf(
     R.drawable.img_banner_1,
     R.drawable.img_banner_2,
     R.drawable.img_banner_3,
 )
 
-internal val homeProducts = listOf(
+private val homeProducts = listOf(
     Product(
         id = 1,
         imageRes = R.drawable.img_product_1,

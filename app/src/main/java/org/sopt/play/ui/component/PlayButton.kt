@@ -32,7 +32,7 @@ fun PlayButton(
         enabled = enabled,
         modifier = modifier
             .fillMaxWidth(),
-        contentPadding = PaddingValues(horizontal = 24.dp, vertical = 14.dp),
+        contentPadding = PaddingValues(all = 16.dp),
         shape = CircleShape,
         colors = ButtonDefaults.buttonColors(
             containerColor = Color(0xFF121212),

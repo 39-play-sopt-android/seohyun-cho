@@ -1,4 +1,3 @@
-
 package org.sopt.play.navigation
 
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -18,14 +17,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
+import org.sopt.play.data.LocalStorage
 import org.sopt.play.ui.login.LoginRoute
 import org.sopt.play.ui.home.HomeRoute
-import org.sopt.play.ui.login.LoginScreen
 import org.sopt.play.ui.register.RegisterRoute
 
 private data class RegisteredUser(
@@ -37,6 +37,11 @@ private data class RegisteredUser(
 @Composable
 fun PlayApp() {
     val navController = rememberNavController()
+
+    val context = LocalContext.current.applicationContext
+    val localStorage = remember(context) {
+        LocalStorage(context)
+    }
 
     var registeredUser by remember { mutableStateOf(RegisteredUser()) }
 
@@ -62,23 +67,23 @@ fun PlayApp() {
 
         NavHost(
             navController = navController,
-            startDestination = "login",
+            startDestination = Login,
             modifier = Modifier
                 .padding(innerPadding)
                 .consumeWindowInsets(innerPadding)
         ) {
-            composable(route = "login") {
+            composable<Login> {
                 LoginRoute(
                     registeredEmail = registeredUser.email,
                     registeredPassword = registeredUser.password,
                     onRegisterClick = {
-                        navController.navigate("register") {
+                        navController.navigate(Register) {
                             launchSingleTop = true
                         }
                     },
                     onLoginClick = {
-                        navController.navigate("home") {
-                            popUpTo("login") {
+                        navController.navigate(Home) {
+                            popUpTo<Login> {
                                 inclusive = true
                             }
                             launchSingleTop = true
@@ -87,7 +92,7 @@ fun PlayApp() {
                 )
             }
 
-            composable(route = "register") {
+            composable<Register> {
                 RegisterRoute(
                     onRegister = { name, email, password ->
                         registeredUser = RegisteredUser(name, email, password)
@@ -104,7 +109,7 @@ fun PlayApp() {
                 )
             }
 
-            composable(route = "home") {
+            composable<Home> {
                 HomeRoute(userName = registeredUser.name)
             }
         }

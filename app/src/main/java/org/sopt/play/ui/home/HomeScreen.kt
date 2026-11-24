@@ -4,10 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -90,7 +91,7 @@ fun HomeScreen(
                             HomeBanner(
                                 imageRes = banner,
                                 contentDescription = "기획전 배너",
-                                modifier = Modifier.width(328.dp),
+                                modifier = Modifier.fillParentMaxWidth(),
                             )
                         }
                     }
@@ -113,9 +114,7 @@ fun HomeScreen(
                     )
 
                     LazyRow(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 5.dp),
+                        modifier = Modifier.fillMaxWidth(),
                         contentPadding = PaddingValues(horizontal = 16.dp),
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
                     ) {
@@ -132,6 +131,8 @@ fun HomeScreen(
                             )
                         }
                     }
+
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
 
