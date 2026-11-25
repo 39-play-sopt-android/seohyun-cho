@@ -85,8 +85,8 @@ fun PostCard(
                 modifier = Modifier
                     .fillMaxHeight()
                     .padding(horizontal = 4.dp),
-                thickness = 1.dp, // 선 두께
-                color = Color.LightGray // 선 색상
+                thickness = 1.dp,
+                color = Gray3
             )
 
             Text(text = date, style = m12, color = Gray3)
