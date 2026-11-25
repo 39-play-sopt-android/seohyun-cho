@@ -17,17 +17,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
-import org.sopt.play.ui.main.MainScreen
-import org.sopt.play.R
-import org.sopt.play.ui.login.LoginScreen
-import org.sopt.play.ui.register.RegisterScreen
+import org.sopt.play.data.LocalStorage
+import org.sopt.play.ui.login.LoginRoute
+import org.sopt.play.ui.home.HomeRoute
+import org.sopt.play.ui.register.RegisterRoute
 
 private data class RegisteredUser(
     val name: String = "",
@@ -39,6 +38,11 @@ private data class RegisteredUser(
 fun PlayApp() {
     val navController = rememberNavController()
 
+    val context = LocalContext.current.applicationContext
+    val localStorage = remember(context) {
+        LocalStorage(context)
+    }
+
     var registeredUser by remember { mutableStateOf(RegisteredUser()) }
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -49,49 +53,47 @@ fun PlayApp() {
             SnackbarHost(snackbarHostState) { data ->
                 Surface(
                     color = Color.Black,
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
                     Text(
                         text = data.visuals.message,
                         color = Color.White,
-                        modifier = Modifier.padding(16.dp),
-                        fontFamily = FontFamily(
-                            Font(R.font.pretendard_medium)
-                        ),
+                        modifier = Modifier.padding(16.dp)
                     )
                 }
             }
-        },
+        }
     ) { innerPadding ->
+
         NavHost(
             navController = navController,
-            startDestination = "login",
+            startDestination = Login,
             modifier = Modifier
                 .padding(innerPadding)
-                .consumeWindowInsets(innerPadding),
+                .consumeWindowInsets(innerPadding)
         ) {
-            composable(route = "login") {
-                LoginScreen(
+            composable<Login> {
+                LoginRoute(
                     registeredEmail = registeredUser.email,
                     registeredPassword = registeredUser.password,
                     onRegisterClick = {
-                        navController.navigate("register") {
+                        navController.navigate(Register) {
                             launchSingleTop = true
                         }
                     },
                     onLoginClick = {
-                        navController.navigate("home") {
-                            popUpTo("login") {
+                        navController.navigate(Home) {
+                            popUpTo<Login> {
                                 inclusive = true
                             }
                             launchSingleTop = true
                         }
-                    },
+                    }
                 )
             }
 
-            composable(route = "register") {
-                RegisterScreen(
+            composable<Register> {
+                RegisterRoute(
                     onRegister = { name, email, password ->
                         registeredUser = RegisteredUser(name, email, password)
 
@@ -100,15 +102,15 @@ fun PlayApp() {
                         coroutineScope.launch {
                             snackbarHostState.showSnackbar(
                                 message = "회원가입이 완료되었어요!",
-                                duration = SnackbarDuration.Short,
+                                duration = SnackbarDuration.Short
                             )
                         }
-                    },
+                    }
                 )
             }
 
-            composable(route = "home") {
-                MainScreen(userName = registeredUser.name)
+            composable<Home> {
+                HomeRoute(userName = registeredUser.name)
             }
         }
     }
