@@ -15,7 +15,7 @@ data class RegisterUiState(
     val isConfirmPasswordError: Boolean
         get() = confirmPassword.isNotEmpty() && confirmPassword != password
     val isRegisterEnabled: Boolean
-        get() = name.isNotEmpty() && email.isNotEmpty() &&
+        get() = name.isNotEmpty() && name.length <= 20 && email.isNotEmpty() &&
             password.isNotEmpty() && confirmPassword.isNotEmpty() &&
             !isEmailError && !isPasswordError && !isConfirmPasswordError
 }

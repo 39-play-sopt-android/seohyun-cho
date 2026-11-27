@@ -1,5 +1,6 @@
 package org.sopt.play.ui.component
 
+import android.icu.number.IntegerWidth
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -26,6 +27,8 @@ fun PlayButton(
     enabled: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    containerColor: Color = Color(0xFF121212),
+    contentColor: Color = Color(0xFFF7F7F7),
 ) {
     Button(
         onClick = onClick,
@@ -35,8 +38,8 @@ fun PlayButton(
         contentPadding = PaddingValues(all = 16.dp),
         shape = CircleShape,
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0xFF121212),
-            contentColor = Color(0xFFF7F7F7),
+            containerColor = containerColor,
+            contentColor = contentColor,
             disabledContainerColor = Color(0xFFF7F7F7),
             disabledContentColor = Color(0xFFB2BABD),
         ),
@@ -67,6 +70,22 @@ private fun PlayButtonPreview() {
             text = "로그인",
             enabled = false,
             onClick = {},
+        )
+
+        PlayButton(
+            text = "로그인",
+            enabled = false,
+            onClick = {},
+            containerColor = Color(0xFFF7F7F7),
+            contentColor = Color(0xFF505559),
+        )
+
+        PlayButton(
+            text = "로그인",
+            enabled = true,
+            onClick = {},
+            containerColor = Color(0xFFF7F7F7),
+            contentColor = Color(0xFF505559),
         )
     }
 }

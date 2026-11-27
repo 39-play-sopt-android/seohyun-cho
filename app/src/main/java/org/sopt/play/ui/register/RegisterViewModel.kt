@@ -10,7 +10,11 @@ class RegisterViewModel : ViewModel() {
     val uiState = _uiState.asStateFlow()
 
     fun onNameChange(name: String) {
-        _uiState.update { it.copy(name = name) }
+        if (name.length <= 20) {
+            _uiState.update { state ->
+                state.copy(name = name)
+            }
+        }
     }
 
     fun onEmailChange(email: String) {
