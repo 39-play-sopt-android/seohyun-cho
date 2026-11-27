@@ -36,6 +36,7 @@ fun MainScreen(
     onMenuClick: (HomeMenu) -> Unit = {},
     onCategoryClick: (HomeCategory) -> Unit = {},
     onFavoriteClick: (Int) -> Unit = {},
+    onSearchClick: () -> Unit = {},
 ) {
     var selectedTab by rememberSaveable {
         mutableStateOf(initialTab)
@@ -63,6 +64,7 @@ fun MainScreen(
                         onMenuClick = onMenuClick,
                         onCategoryClick = onCategoryClick,
                         onFavoriteClick = onFavoriteClick,
+                        onSearchClick = onSearchClick,
                     )
 
                     MainTab.FAVORITE -> MainPlaceholderScreen(

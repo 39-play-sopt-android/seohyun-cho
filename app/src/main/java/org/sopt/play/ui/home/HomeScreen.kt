@@ -40,6 +40,7 @@ import org.sopt.play.ui.preview.PlayScreenPreviews
 @Composable
 fun HomeRoute(
     userName: String,
+    onSearchClick: () -> Unit,
     viewModel: HomeViewModel = viewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -50,6 +51,7 @@ fun HomeRoute(
         onMenuClick = viewModel::onMenuClick,
         onCategoryClick = viewModel::onCategoryClick,
         onFavoriteClick = viewModel::onFavoriteClick,
+        onSearchClick = onSearchClick,
     )
 }
 
@@ -61,6 +63,7 @@ fun HomeScreen(
     onMenuClick: (HomeMenu) -> Unit,
     onCategoryClick: (HomeCategory) -> Unit,
     onFavoriteClick: (Int) -> Unit,
+    onSearchClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -69,7 +72,7 @@ fun HomeScreen(
             .background(Color.White),
     ) {
         HomeTopBar(
-            onSearchClick = {},
+            onSearchClick = onSearchClick,
         )
 
         LazyVerticalGrid(

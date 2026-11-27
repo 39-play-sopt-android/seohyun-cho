@@ -10,3 +10,6 @@ data object Register
 
 @Serializable
 data object Home
+
+@Serializable
+data object Search

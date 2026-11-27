@@ -1,65 +1,169 @@
 package org.sopt.play.ui.search.component
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import org.sopt.play.R
+import org.sopt.play.ui.component.PlayButton
+import org.sopt.play.ui.component.PlayTextField
+
+val Gray1 = Color(0xFFF7F7F7)
+val Gray3 = Color(0xFFB2BABD)
+val Gray5 = Color(0xFF505559)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlayBottomSheet(
+fun BottomSheet(
     onDismissRequest: () -> Unit,
-    modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit = {},
+    onComplete: (String, String) -> Unit,
+    title: String = "",
+    body: String = "",
 ) {
-    // 시트가 열리고 닫히는 상태를 관리해.
-    val sheetState = rememberModalBottomSheetState(
-        // 반쯤 열린 중간 단계를 생략해.
-        skipPartiallyExpanded = true,
+
+    val sheetState = rememberModalBottomSheetState()
+
+            ModalBottomSheet(
+                onDismissRequest = onDismissRequest,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(
+                    topStart = 24.dp,
+                    topEnd = 24.dp,
+                ),
+                containerColor = Color.White,
+                dragHandle = {
+                    BottomSheetDefaults.DragHandle(
+                        color = Gray3,
+                        width = 32.dp,
+                        height = 4.dp,
+                    )
+                },
+                sheetState = sheetState
+            ) {
+                PostBottomSheetContent(
+                    onComplete = onComplete,
+                    title = title,
+                    body = body,
+                )
+
+
+    }
+}
+
+@Composable
+fun PostBottomSheetContent(
+    onComplete: (String, String) -> Unit,
+    modifier: Modifier = Modifier,
+    title: String = "",
+    body: String = "",
+) {
+    var title by rememberSaveable(title) { mutableStateOf(title) }
+    var body by rememberSaveable(body) { mutableStateOf(body) }
+
+    val isCompleteEnabled = title.isNotBlank() && body.isNotBlank()
+
+    val sb16 = TextStyle(
+        fontFamily = FontFamily(Font(R.font.pretendard_semibold)),
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 16.sp,
+        lineHeight = 19.2.sp,
+        letterSpacing = (-0.16).sp,
     )
 
-    ModalBottomSheet(
-        // 사용자가 시트를 닫았을 때 호출할 함수.
-        onDismissRequest = onDismissRequest,
-
-        modifier = modifier,
-        sheetState = sheetState,
-
-        // 위쪽 모서리만 둥글게 설정.
-        shape = RoundedCornerShape(
-            topStart = 24.dp,
-            topEnd = 24.dp,
-        ),
-
-        // 시트 배경색.
-        containerColor = Color.White,
-        tonalElevation = 0.dp,
-
-        // 시트 위쪽의 회색 손잡이.
-        dragHandle = {
-            BottomSheetDefaults.DragHandle(
-                width = 32.dp,
-                height = 4.dp,
-                color = Color(0xFFB2BABD),
-            )
-        },
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
     ) {
-        // 실제 내용을 넣는 영역.
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(min = 200.dp)
-                .padding(
-                    start = 20.dp,
-                    end = 20.dp,
-                    bottom = 20.dp,
-                ),
-            content = content,
+        Text(
+            text = "제목",
+            style = sb16,
+            modifier = Modifier.padding(start = 8.dp),
         )
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        PlayTextField(
+            value = title,
+            onValueChange = {
+                if (it.length <= 20) {
+                    title = it
+                }
+            },
+            placeholder = "제목을 입력하세요.",
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Text(
+            text = "본문",
+            style = sb16,
+            modifier = Modifier.padding(start = 8.dp),
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        PlayTextField(
+            value = body,
+            onValueChange = {
+                if (it.length <= 1000) {
+                    body = it
+                }
+            },
+            placeholder = "본문을 입력하세요.",
+        )
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        PlayButton(
+            text = "완료",
+            enabled = isCompleteEnabled,
+            onClick = {onComplete(title, body)},
+            containerColor = Gray1,
+            contentColor = Gray5,
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun BottomSheetNonePreview() {
+    PostBottomSheetContent(
+        onComplete = { _, _ -> },
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun BottomSheetTruePreview() {
+    PostBottomSheetContent(
+        onComplete = { _, _ -> }, title = "제목입니다", body = "본문입니다."
+    )
 }

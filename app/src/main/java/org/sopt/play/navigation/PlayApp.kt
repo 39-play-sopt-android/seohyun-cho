@@ -27,6 +27,7 @@ import org.sopt.play.data.LocalStorage
 import org.sopt.play.ui.login.LoginRoute
 import org.sopt.play.ui.home.HomeRoute
 import org.sopt.play.ui.register.RegisterRoute
+import org.sopt.play.ui.search.SearchRoute
 
 private data class RegisteredUser(
     val name: String = "",
@@ -82,13 +83,17 @@ fun PlayApp() {
                         }
                     },
                     onLoginClick = {
+                        localStorage.saveLogin(
+                            userName = registeredUser.name,
+                        )
+
                         navController.navigate(Home) {
                             popUpTo<Login> {
                                 inclusive = true
                             }
                             launchSingleTop = true
                         }
-                    }
+                    },
                 )
             }
 
@@ -110,7 +115,18 @@ fun PlayApp() {
             }
 
             composable<Home> {
-                HomeRoute(userName = registeredUser.name)
+                HomeRoute(
+                    userName = registeredUser.name,
+                    onSearchClick = {
+                        navController.navigate(Search) {
+                            launchSingleTop = true
+                        }
+                    },
+                )
+            }
+
+            composable<Search> {
+                SearchRoute()
             }
         }
     }

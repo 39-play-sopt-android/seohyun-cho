@@ -3,6 +3,7 @@ package org.sopt.play.data
 import android.content.Context
 
 class LocalStorage(context: Context) {
+
     private val preferences =
         context.applicationContext.getSharedPreferences(
             "play_local_storage",
@@ -22,5 +23,15 @@ class LocalStorage(context: Context) {
 
     fun getUserName(): String {
         return preferences.getString("user_name", "").orEmpty()
+    }
+
+    fun saveAuthorizationCode(authorizationCode: String) {
+        preferences.edit()
+            .putString("authorization_code", authorizationCode)
+            .apply()
+    }
+
+    fun getAuthorizationCode(): String {
+        return preferences.getString("authorization_code", "").orEmpty()
     }
 }

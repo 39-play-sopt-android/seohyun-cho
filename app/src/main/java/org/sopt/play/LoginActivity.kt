@@ -75,7 +75,6 @@ import kotlinx.coroutines.launch
 
 class LoginActivity : ComponentActivity() {
 
-    //피드백 반영 (가입 정보 저장은 일반 변수로 유지하고 nullable 전달 오류 방지)
     private var registeredEmail: String = ""
     private var registeredPassword: String = ""
 
@@ -88,27 +87,24 @@ class LoginActivity : ComponentActivity() {
             }
         }
 
-    //피드백 반영 (가입 완료는 UI 상태 대신 일회성 이벤트로 전달)
     private val registerSuccessEvents = Channel<Pair<String, String>>(Channel.BUFFERED)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 상단바 컬러 설정
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.light(
-                scrim = Color.White.toArgb(), // 라이트 모드 시 상태바 색상
-                darkScrim = Color.DarkGray.toArgb() // 다크 모드 시 상태바 색상
+                scrim = Color.White.toArgb(),
+                darkScrim = Color.DarkGray.toArgb()
             )
         )
 
         setContent {
 
             val snackbarHostState = remember { SnackbarHostState() }
-            //피드백 반영 (일반 저장 변수와 구분하여 입력란 갱신에 필요한 화면 상태만 관리)
+
             var loginCredentials by remember { mutableStateOf(registeredEmail to registeredPassword) }
 
-            //피드백 반영 (상태 플래그 없이 가입 완료 알림을 수신하고 자동으로 닫기)
             LaunchedEffect(Unit) {
                 registerSuccessEvents.receiveAsFlow().collect { credentials ->
                     loginCredentials = credentials
@@ -124,7 +120,7 @@ class LoginActivity : ComponentActivity() {
             Scaffold(
                 snackbarHost = {
                     SnackbarHost(snackbarHostState) { data ->
-                        //피드백 반영 (배경색과 둥근 모서리를 제공하는 Surface 유지, 단순 배치용 Box와 구분)
+
                         Surface(
                             color = Color.Black,
                             shape = RoundedCornerShape(12.dp),
@@ -133,14 +129,14 @@ class LoginActivity : ComponentActivity() {
                                 text = data.visuals.message,
                                 color = Color.White,
                                 modifier = Modifier.padding(16.dp),
-                                //피드백 반영 (빠진 텍스트에 Pretendard 적용)
+
                                 fontFamily = FontFamily(Font(R.font.pretendard_medium)),
                             )
                         }
                     }
                 }
             ) { innerPadding ->
-                //피드백 반영 (중복 Box 제거 후 화면 modifier에 Scaffold 여백 전달)
+
                 LoginScreen(
                     registeredEmail = loginCredentials.first,
                     registeredPassword = loginCredentials.second,
@@ -174,25 +170,16 @@ class LoginActivity : ComponentActivity() {
 fun LoginScreen(
     registeredEmail: String,
     registeredPassword: String,
-    //피드백 반영 (호출하는 쪽에서 화면 여백을 조절할 수 있도록 modifier 제공)
+
     modifier: Modifier = Modifier,
     onRegisterClick: () -> Unit,
     onLoginClick: () -> Unit,
 ) {
 
-    /*var email by remember(registeredEmail) {
-        mutableStateOf(registeredEmail)
-    }
-    var password by remember(registeredPassword) {
-        mutableStateOf(registeredPassword)
-    }*/
-
-    //피드백 반영 (회원가입 정보로 로그인 입력란을 자동 채우기 위한 초기값)
     val emailState = rememberTextFieldState(initialText = registeredEmail)
 
     val passwordState = rememberTextFieldState(initialText = registeredPassword)
 
-    //피드백 반영 (remember 초기값은 재적용되지 않으므로 가입 정보 변경 시 입력값 갱신)
     LaunchedEffect(registeredEmail, registeredPassword) {
         emailState.edit {
             replace(0, length, registeredEmail)
@@ -213,18 +200,14 @@ fun LoginScreen(
     val isLoginEnabled =
         email.isNotEmpty() && password.isNotEmpty() && !isEmailError && !isPasswordError
 
-    // 심화과제
-    //피드백 반영 (Next의 기본 포커스 이동을 사용하고 명시적인 FocusRequester 제거)
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
-    // 도약과제
     val context = LocalContext.current
 
     var emailFocused by remember { mutableStateOf(false) }
     var passwordFocused by remember { mutableStateOf(false) }
 
-    //피드백 반영 (화면 modifier 적용 및 Figma 기준 여백 정리)
     Column(
         modifier =
             modifier
@@ -256,8 +239,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            // value = email,
-            // onValueChange = {email = it},
+
             state = emailState,
             isError = isEmailError,
             placeholder = {
@@ -267,17 +249,15 @@ fun LoginScreen(
                     fontFamily = FontFamily(Font(R.font.pretendard_medium)),
                 )
             },
-            // singleLine = true,
+
             lineLimits = TextFieldLineLimits.SingleLine,
-            //피드백 반영 (Next 키는 기본 포커스 이동 동작을 사용)
+
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            /*keyboardActions = KeyboardActions(
-                onNext = { passwordFocusRequester.requestFocus() }
-            ),*/
+
             modifier =
                 Modifier.fillMaxWidth()
                     .onFocusChanged { emailFocused = it.isFocused }
-                    //피드백 반영 (Figma 테두리 2dp 적용, 오류와 포커스 색상 유지)
+
                     .border(
                         width = 2.dp,
                         color =
@@ -288,7 +268,7 @@ fun LoginScreen(
                             },
                         shape = RoundedCornerShape(12.dp),
                     ),
-            //피드백 반영 (고정 높이 대신 내부 여백 사용, 입력 글자 잘림 방지 및 Pretendard 적용)
+
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 15.dp),
             textStyle =
                 TextStyle(
@@ -307,13 +287,12 @@ fun LoginScreen(
                 ),
         )
 
-        //피드백 반영 (visible로 오류 표시 제어, 중복 if 제거 및 글자 크기 통일)
         AnimatedVisibility(
             visible = isEmailError,
             enter = fadeIn() + expandVertically(),
             exit = fadeOut() + shrinkVertically(),
         ) {
-            //피드백 반영 (오류 문구와 여백이 겹치지 않도록 세로 배치)
+
             Column {
                 Spacer(modifier = Modifier.height(4.dp))
 
@@ -338,8 +317,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            // value = password,
-            // onValueChange = { password = it },
+
             state = passwordState,
             isError = isPasswordError,
             placeholder = {
@@ -349,7 +327,6 @@ fun LoginScreen(
                     fontFamily = FontFamily(Font(R.font.pretendard_medium)),
                 )
             },
-            // singleLine = true,
 
             onKeyboardAction = {
                 keyboardController?.hide()
@@ -357,10 +334,7 @@ fun LoginScreen(
             },
             lineLimits = TextFieldLineLimits.SingleLine,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            /*keyboardActions = KeyboardActions(
-                onDone = { keyboardController?.hide() }
-            ),*/
-            // visualTransformation = PasswordVisualTransformation(),
+
             outputTransformation =
                 OutputTransformation {
                     replace(0, length, "•".repeat(length))
@@ -368,7 +342,7 @@ fun LoginScreen(
             modifier =
                 Modifier.fillMaxWidth()
                     .onFocusChanged { passwordFocused = it.isFocused }
-                    //피드백 반영 (Figma 테두리 2dp 적용, 오류와 포커스 색상 유지)
+
                     .border(
                         width = 2.dp,
                         color =
@@ -379,7 +353,7 @@ fun LoginScreen(
                             },
                         shape = RoundedCornerShape(12.dp),
                     ),
-            //피드백 반영 (고정 높이 대신 내부 여백 사용, 입력 글자 잘림 방지 및 Pretendard 적용)
+
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 15.dp),
             textStyle =
                 TextStyle(
@@ -398,13 +372,12 @@ fun LoginScreen(
                 ),
         )
 
-        //피드백 반영 (visible로 오류 표시 제어, 중복 if 제거 및 글자 크기 통일)
         AnimatedVisibility(
             visible = isPasswordError,
             enter = fadeIn() + expandVertically(),
             exit = fadeOut() + shrinkVertically(),
         ) {
-            //피드백 반영 (오류 문구와 여백이 겹치지 않도록 세로 배치)
+
             Column {
                 Spacer(modifier = Modifier.height(4.dp))
 
@@ -412,7 +385,7 @@ fun LoginScreen(
                     text = "비밀번호는 6자 이상 입력해주세요.",
                     fontSize = 14.sp,
                     color = Color.Red,
-                    //피드백 반영 (빠진 텍스트에 Pretendard 적용)
+
                     fontFamily = FontFamily(Font(R.font.pretendard_medium)),
                 )
             }
@@ -435,7 +408,7 @@ fun LoginScreen(
                 },
                 enabled = isLoginEnabled,
                 modifier = Modifier.fillMaxWidth().height(54.dp),
-                //피드백 반영 (둥근 버튼 의도를 CircleShape로 명확하게 표현)
+
                 shape = CircleShape,
                 colors =
                     ButtonDefaults.buttonColors(
@@ -447,10 +420,10 @@ fun LoginScreen(
             ) {
                 Text(
                     text = "로그인",
-                    //피드백 반영 (버튼 글자를 Figma 기준 14sp, SemiBold로 조정)
+
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
-                    //피드백 반영 (빠진 텍스트에 Pretendard 적용)
+
                     fontFamily = FontFamily(Font(R.font.pretendard_semibold)),
                 )
             }
@@ -467,7 +440,7 @@ fun LoginScreen(
                 text = "아직 계정이 없으신가요?",
                 fontSize = 14.sp,
                 color = Color.Gray,
-                //피드백 반영 (빠진 텍스트에 Pretendard 적용)
+
                 fontFamily = FontFamily(Font(R.font.pretendard_medium)),
             )
 
@@ -476,11 +449,11 @@ fun LoginScreen(
             TextButton(onClick = { onRegisterClick() }) {
                 Text(
                     text = "회원가입하기",
-                    //피드백 반영 (버튼 글자를 Figma 기준 14sp, SemiBold로 조정)
+
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.Black,
-                    //피드백 반영 (빠진 텍스트에 Pretendard 적용)
+
                     fontFamily = FontFamily(Font(R.font.pretendard_semibold)),
                 )
             }
@@ -488,7 +461,6 @@ fun LoginScreen(
     }
 }
 
-//피드백 반영 (Preview는 외부 호출이 없어 private으로 선언하고 파일 하단에 배치)
 @Preview(showBackground = true)
 @Composable
 private fun LoginScreenPreview() {

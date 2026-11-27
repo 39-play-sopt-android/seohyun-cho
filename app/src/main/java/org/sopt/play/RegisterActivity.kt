@@ -60,11 +60,10 @@ class RegisterActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 상단바 컬러 설정
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.light(
-                scrim = Color.White.toArgb(), // 라이트 모드 시 상태바 색상
-                darkScrim = Color.DarkGray.toArgb() // 다크 모드 시 상태바 색상
+                scrim = Color.White.toArgb(),
+                darkScrim = Color.DarkGray.toArgb()
             )
         )
 
@@ -87,12 +86,11 @@ class RegisterActivity : ComponentActivity() {
 
 @Composable
 fun RegisterScreen(
-    //피드백 반영 (회원가입 화면에도 외부 modifier 전달 지원)
+
     modifier: Modifier = Modifier,
     onRegister: (String, String) -> Unit,
 ) {
-    //피드백 반영 (내부 여백을 지원하는 State 기반 TextField로 입력 상태 관리)
-    // 입력값 상태 관리
+
     val nameState = rememberTextFieldState()
     val name = nameState.text.toString()
     val emailState = rememberTextFieldState()
@@ -102,16 +100,12 @@ fun RegisterScreen(
     val confirmPasswordState = rememberTextFieldState()
     val confirmPassword = confirmPasswordState.text.toString()
 
-    // 이메일 형식 검사
     val isEmailError = email.isNotEmpty() && !Patterns.EMAIL_ADDRESS.matcher(email).matches()
 
-    // 비밀번호 6자 이상 검사
     val isPasswordError = password.isNotEmpty() && password.length < 6
 
-    // 비밀번호 일치 검사
     val isConfirmPasswordError = confirmPassword.isNotEmpty() && confirmPassword != password
 
-    // 정보 미입력란(빈칸) 검사
     val isRegisterEnabled =
         name.isNotEmpty() &&
             email.isNotEmpty() &&
@@ -129,12 +123,11 @@ fun RegisterScreen(
     var passwordFocused by remember { mutableStateOf(false) }
     var confirmPasswordFocused by remember { mutableStateOf(false) }
 
-    //피드백 반영 (화면 modifier 적용 및 Figma 기준 여백 정리)
     Column(
         modifier =
             modifier
                 .fillMaxSize()
-                .safeDrawingPadding() //.safeContentPadding() -> 얘랑 다름
+                .safeDrawingPadding()
                 .verticalScroll(rememberScrollState())
                 .padding(
                     start = 16.dp,
@@ -162,7 +155,7 @@ fun RegisterScreen(
 
         OutlinedTextField(
             state = nameState,
-            //피드백 반영 (Next로 다음 입력란 이동, 마지막 입력란은 Done 처리)
+
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
             placeholder = {
                 Text(
@@ -175,7 +168,7 @@ fun RegisterScreen(
             modifier =
                 Modifier.fillMaxWidth()
                     .onFocusChanged { nameFocused = it.isFocused }
-                    //피드백 반영 (Figma 테두리 2dp 적용, 오류와 포커스 색상 유지)
+
                     .border(
                         width = 2.dp,
                         color =
@@ -186,7 +179,7 @@ fun RegisterScreen(
                             },
                         shape = RoundedCornerShape(12.dp),
                     ),
-            //피드백 반영 (고정 높이 대신 내부 여백 사용, 입력 글자 잘림 방지 및 Pretendard 적용)
+
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 15.dp),
             textStyle =
                 TextStyle(
@@ -218,7 +211,7 @@ fun RegisterScreen(
 
         OutlinedTextField(
             state = emailState,
-            //피드백 반영 (Next로 다음 입력란 이동, 마지막 입력란은 Done 처리)
+
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
             isError = isEmailError,
             placeholder = {
@@ -232,7 +225,7 @@ fun RegisterScreen(
             modifier =
                 Modifier.fillMaxWidth()
                     .onFocusChanged { emailFocused = it.isFocused }
-                    //피드백 반영 (Figma 테두리 2dp 적용, 오류와 포커스 색상 유지)
+
                     .border(
                         width = 2.dp,
                         color =
@@ -243,7 +236,7 @@ fun RegisterScreen(
                             },
                         shape = RoundedCornerShape(12.dp),
                     ),
-            //피드백 반영 (고정 높이 대신 내부 여백 사용, 입력 글자 잘림 방지 및 Pretendard 적용)
+
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 15.dp),
             textStyle =
                 TextStyle(
@@ -261,13 +254,13 @@ fun RegisterScreen(
                     unfocusedContainerColor = Color.White,
                 ),
         )
-        //피드백 반영 (visible로 오류 표시 제어, 중복 if 제거 및 글자 크기 통일)
+
         AnimatedVisibility(
             visible = isEmailError,
             enter = fadeIn() + expandVertically(),
             exit = fadeOut() + shrinkVertically(),
         ) {
-            //피드백 반영 (오류 문구와 여백이 겹치지 않도록 세로 배치)
+
             Column {
                 Spacer(modifier = Modifier.height(4.dp))
 
@@ -293,7 +286,7 @@ fun RegisterScreen(
 
         OutlinedTextField(
             state = passwordState,
-            //피드백 반영 (Next로 다음 입력란 이동, 마지막 입력란은 Done 처리)
+
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
             isError = isPasswordError,
             placeholder = {
@@ -311,7 +304,7 @@ fun RegisterScreen(
             modifier =
                 Modifier.fillMaxWidth()
                     .onFocusChanged { passwordFocused = it.isFocused }
-                    //피드백 반영 (Figma 테두리 2dp 적용, 오류와 포커스 색상 유지)
+
                     .border(
                         width = 2.dp,
                         color =
@@ -322,7 +315,7 @@ fun RegisterScreen(
                             },
                         shape = RoundedCornerShape(12.dp),
                     ),
-            //피드백 반영 (고정 높이 대신 내부 여백 사용, 입력 글자 잘림 방지 및 Pretendard 적용)
+
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 15.dp),
             textStyle =
                 TextStyle(
@@ -341,13 +334,12 @@ fun RegisterScreen(
                 ),
         )
 
-        //피드백 반영 (visible로 오류 표시 제어, 중복 if 제거 및 글자 크기 통일)
         AnimatedVisibility(
             visible = isPasswordError,
             enter = fadeIn() + expandVertically(),
             exit = fadeOut() + shrinkVertically(),
         ) {
-            //피드백 반영 (오류 문구와 여백이 겹치지 않도록 세로 배치)
+
             Column {
                 Spacer(modifier = Modifier.height(4.dp))
 
@@ -355,7 +347,7 @@ fun RegisterScreen(
                     text = "비밀번호는 6자 이상 입력해주세요.",
                     fontSize = 14.sp,
                     color = Color.Red,
-                    //피드백 반영 (빠진 텍스트에 Pretendard 적용)
+
                     fontFamily = FontFamily(Font(R.font.pretendard_medium)),
                 )
             }
@@ -374,7 +366,7 @@ fun RegisterScreen(
 
         OutlinedTextField(
             state = confirmPasswordState,
-            //피드백 반영 (Next로 다음 입력란 이동, 마지막 입력란은 Done 처리)
+
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             onKeyboardAction = {
                 keyboardController?.hide()
@@ -396,7 +388,7 @@ fun RegisterScreen(
             modifier =
                 Modifier.fillMaxWidth()
                     .onFocusChanged { confirmPasswordFocused = it.isFocused }
-                    //피드백 반영 (Figma 테두리 2dp 적용, 오류와 포커스 색상 유지)
+
                     .border(
                         width = 2.dp,
                         color =
@@ -407,7 +399,7 @@ fun RegisterScreen(
                             },
                         shape = RoundedCornerShape(12.dp),
                     ),
-            //피드백 반영 (고정 높이 대신 내부 여백 사용, 입력 글자 잘림 방지 및 Pretendard 적용)
+
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 15.dp),
             textStyle =
                 TextStyle(
@@ -426,13 +418,12 @@ fun RegisterScreen(
                 ),
         )
 
-        //피드백 반영 (visible로 오류 표시 제어, 중복 if 제거 및 글자 크기 통일)
         AnimatedVisibility(
             visible = isConfirmPasswordError,
             enter = fadeIn() + expandVertically(),
             exit = fadeOut() + shrinkVertically(),
         ) {
-            //피드백 반영 (오류 문구와 여백이 겹치지 않도록 세로 배치)
+
             Column {
                 Spacer(modifier = Modifier.height(4.dp))
 
@@ -451,7 +442,7 @@ fun RegisterScreen(
             onClick = { onRegister(email, password) },
             enabled = isRegisterEnabled,
             modifier = Modifier.fillMaxWidth().height(54.dp),
-            //피드백 반영 (둥근 버튼 의도를 CircleShape로 명확하게 표현)
+
             shape = CircleShape,
             colors =
                 ButtonDefaults.buttonColors(
@@ -465,14 +456,13 @@ fun RegisterScreen(
                 text = "회원가입",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
-                //피드백 반영 (빠진 텍스트에 Pretendard 적용)
+
                 fontFamily = FontFamily(Font(R.font.pretendard_semibold)),
             )
         }
     }
 }
 
-//피드백 반영 (Preview는 외부 호출이 없어 private으로 선언하고 파일 하단에 배치)
 @Preview(showBackground = true)
 @Composable
 private fun RegisterScreenPreview() {
